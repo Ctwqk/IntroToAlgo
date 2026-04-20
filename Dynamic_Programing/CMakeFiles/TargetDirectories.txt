@@ -1,3 +1,0 @@
-/home/taiwei/code/cCode/C_code/intro_of_algo/Dynamic_Programing/CMakeFiles/MaxQuadExp.dir
-/home/taiwei/code/cCode/C_code/intro_of_algo/Dynamic_Programing/CMakeFiles/edit_cache.dir
-/home/taiwei/code/cCode/C_code/intro_of_algo/Dynamic_Programing/CMakeFiles/rebuild_cache.dir

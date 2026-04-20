@@ -1,0 +1,30 @@
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# CMake and build output
+build/
+cmake-build-*/
+.cmake/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+Testing/
+.ninja_deps
+.ninja_log
+Dynamic_Programing/Makefile
+
+# Compiled artifacts
+*.o
+*.obj
+*.exe
+*.out
+a.out
+
+# Local logs and editor swaps
+*.log
+*.swp
+*.swo
