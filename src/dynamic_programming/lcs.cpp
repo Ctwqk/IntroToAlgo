@@ -8,11 +8,12 @@ Lcs::Lcs(std::string s1, std::string s2)
     : str1(std::move(s1)),
       str2(std::move(s2)),
       size1(static_cast<int>(str1.size())),
-      size2(static_cast<int>(str2.size())),
-      tabulate(static_cast<std::size_t>(size2) + 1,
-               std::vector<int>(static_cast<std::size_t>(size1) + 1, 0)) {}
+      size2(static_cast<int>(str2.size())) {}
 
 std::string Lcs::getLCS() {
+    // Length-only callers never need the full traceback table.
+    tabulate.assign(static_cast<std::size_t>(size2) + 1,
+                    std::vector<int>(static_cast<std::size_t>(size1) + 1, 0));
     for (int i = 1; i <= size2; i++) {
         for (int j = 1; j <= size1; j++) {
             if (str1[j - 1] == str2[i - 1])

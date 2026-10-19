@@ -11,7 +11,8 @@ namespace introalgo {
 ///  * getLCS()       fills the full (|str2|+1) x (|str1|+1) table and traces back
 ///                   one longest common subsequence.  O(nm) time, O(nm) space.
 ///  * getLCSLength() computes only the length with a single row of the table.
-///                   O(nm) time, O(n) space.
+///                   O(nm) time, O(n) extra space. The full table is allocated only by
+///                   getLCS() and retained after that call.
 class Lcs {
 public:
     Lcs(std::string s1, std::string s2);
