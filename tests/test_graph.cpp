@@ -42,7 +42,7 @@ Graph randomGraph(testutil::Rng& rng, int n, int edges, bool undirected, int max
 // Oracle for reachability: transitive closure by Warshall's algorithm.
 std::vector<std::vector<bool>> closure(const Graph& g) {
     const int n = g.vertices();
-    std::vector<std::vector<bool>> reach(std::size_t(n), std::vector<bool>(std::size_t(n), false));
+    std::vector<std::vector<bool>> reach(static_cast<std::size_t>(n), std::vector<bool>(static_cast<std::size_t>(n), false));
     for (int i = 0; i < n; ++i) {
         reach[i][i] = true;
         for (int j = 0; j < n; ++j)
@@ -70,7 +70,7 @@ bool bruteUndirectedCycle(const Graph& g) {
     const int n = g.vertices();
     for (int i = 0; i < n; ++i)
         if (g.matrix()[i][i]) return true;
-    std::vector<bool> removed(std::size_t(n), false);
+    std::vector<bool> removed(static_cast<std::size_t>(n), false);
     bool progress = true;
     while (progress) {
         progress = false;
@@ -429,7 +429,7 @@ TEST(Graph, RandomizedMultmatMatchesFloydWarshall) {
     for (int iter = 0; iter < 200; ++iter) {
         const int n = testutil::randInt(rng, 1, 9);
         Graph g = randomGraph(rng, n, testutil::randInt(rng, 0, 25), testutil::randInt(rng, 0, 1) == 1, 9, true);
-        std::vector<std::vector<long long>> fw(std::size_t(n), std::vector<long long>(std::size_t(n), inf));
+        std::vector<std::vector<long long>> fw(static_cast<std::size_t>(n), std::vector<long long>(static_cast<std::size_t>(n), inf));
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j)
                 if (g.matrix()[i][j]) fw[i][j] = g.matrix()[i][j];

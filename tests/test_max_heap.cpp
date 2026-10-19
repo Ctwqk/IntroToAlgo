@@ -32,7 +32,7 @@ TEST(MaxHeap, OriginalDemoValues) {
         std::istringstream words(line);
         int n = 0, x;
         while (words >> x) ++n;
-        counts.push_back(std::size_t(n));
+        counts.push_back(static_cast<std::size_t>(n));
     }
     EXPECT_EQ(counts, (std::vector<std::size_t>{1, 2, 4, 8, 6}));
 }

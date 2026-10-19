@@ -62,8 +62,14 @@ set(INTROALGO_SOURCES
   src/data_structures/max_heap.cpp
   src/data_structures/rb_tree.cpp
   src/data_structures/van_emde_boas.cpp
+  src/backtracking/constrained_permutations.cpp
+  src/geometry/rotating_cube.cpp
   src/graph/flow_graph.cpp
   src/graph/graph.cpp
+  src/greedy/solar_panels.cpp
+  src/linear_programming/simplex.cpp
+  src/math/optimal_stopping.cpp
+  src/matrix/lup.cpp
   src/sorting/sort.cpp
   src/strings/kmp.cpp
   src/strings/rolling_hash.cpp
@@ -111,6 +117,12 @@ if(INTROALGO_BUILD_EXAMPLES)
   introalgo_add_example(sort_demo examples/sorting/sort_demo.cpp)
   introalgo_add_example(flow_graph_demo examples/graph/flow_graph_demo.cpp)
   introalgo_add_example(graph_demo examples/graph/graph_demo.cpp)
+  introalgo_add_example(constrained_permutations_demo examples/backtracking/constrained_permutations_demo.cpp)
+  introalgo_add_example(lup_demo examples/matrix/lup_demo.cpp)
+  introalgo_add_example(simplex_demo examples/linear_programming/simplex_demo.cpp)
+  introalgo_add_example(solar_panels_demo examples/greedy/solar_panels_demo.cpp)
+  introalgo_add_example(optimal_stopping_demo examples/math/optimal_stopping_demo.cpp)
+  introalgo_add_example(rotating_cube_demo examples/geometry/rotating_cube_demo.cpp)
   introalgo_add_example(kmp_demo examples/strings/kmp_demo.cpp)
   introalgo_add_example(rolling_hash_demo examples/strings/rolling_hash_demo.cpp)
   introalgo_add_example(trie_demo examples/strings/trie_demo.cpp)
@@ -151,7 +163,13 @@ if(INTROALGO_BUILD_TESTS)
     tests/test_rb_tree.cpp
     tests/test_sort.cpp
     tests/test_van_emde_boas.cpp
+    tests/test_constrained_permutations.cpp
     tests/test_flow_graph.cpp
+    tests/test_lup.cpp
+    tests/test_optimal_stopping.cpp
+    tests/test_rotating_cube.cpp
+    tests/test_simplex.cpp
+    tests/test_solar_panels.cpp
     tests/test_graph.cpp
     tests/test_kmp.cpp
     tests/test_rolling_hash.cpp

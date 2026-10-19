@@ -1,141 +1,112 @@
-#include <iostream>
-using namespace std;
-class LUP{
-private:
-    int size;
-    bool flagLUP;
-    bool flagSolve;
-    double **A,**U,**L,*P,**Ar;
-    void calculate(){   //LU without space optimization;
-        for(int i=0;i<size;i++){
-            U[i][i]=A[i][i];
-            L[i][i]=1;
-            for(int j=i+1;j<size;j++){
-                L[j][i]=A[j][i]/A[i][i];
-                U[i][j]=A[i][j];
-            }
-            for(int j=i+1;j<size;j++) for(int k=i+1;k<size;k++) A[j][k]=A[j][k]-L[j][i]*U[i][k];
-        }
-        flagLUP=true;
-    }
-    void calculate2(){  //LU with space optimization;
-        for(int i=0;i<size;i++){
-            for(int j=i+1;j<size;j++){
-                A[j][i]/=A[i][i];
-                for(int k=i+1;k<size;k++) A[j][k]=A[j][k]-A[j][i]*A[i][k];
-            }
-        }
-        flagLUP=true;
-    }
-    void calculate3(){  //LUP with space optimization;
-        for(int i=0;i<size;i++){
-            int max=i;
-            for(int k=i+1;k<size;k++) if(abs(A[k][i])>abs(A[max][i])) max=k; 
-            double *tmp=A[max],swa=0;
-            A[max]=A[i];
-            A[i]=tmp;
-            swa=P[max];
-            P[max]=P[i];
-            P[i]=swa;
-            for(int j=i+1;j<size;j++){
-                A[j][i]/=A[i][i];
-                for(int k=i+1;k<size;k++) A[j][k]=A[j][k]-A[j][i]*A[i][k];
-            }
-        }
-        flagLUP=true;
-    }
-    void solve(int *b){
-        for(int i=0;i<size;i++) for(int j=0;j<i;j++) b[i]-=A[i][j]*b[j]; //convert b into y;
-        for(int i=size-1;i>=0;i--){                                      //convert y into x;
-            for(int j=i+1;j<size;j++) b[i]-=b[j]*A[i][j];
-            b[i]/=A[i][i];
-        }
-        flagSolve=true;
-    }
-    void getReverse(){
+#include "introalgo/matrix/lup.hpp"
 
-    }
-public:
-    LUP(int n,double** mat):A(mat),size(n){
-        U=new double*[n];
-        L=new double*[n];
-        P=new double[n];
-        for(int i=0;i<n;i++){
-            U[i]=new double[n]();
-            L[i]=new double[n]();
-            P[i]=i;            
-        }
-        flagLUP=false;
-    }
-    double **getAP(){  //last row of ans is P;
-        if(!flagLUP) calculate3();
-        double** ans=new double*[size+1];
-        for(int i=0;i<size;i++) ans[i]=A[i];
-        ans[size]=P;
-        return ans;
-    }
-    
-    void showb(int *b){
-        if(!flagSolve) solve(b);
-        for(int i=0;i<size;i++) cout<<b[i]<<" ";
-    }
-    void show2(){
-        if(!flagLUP) calculate3();
-        cout<<'P'<<":"<<endl;
-        for(int i=0;i<size;i++)cout<<P[i]<<" ";
-        cout<<'A'<<":"<<endl;
-        for(int i=0;i<size;i++){
-            for(int j=0;j<size;j++) cout<<A[i][j]<<" ";
-            cout<<endl;
-        }
-    }
-};
-class SolveEquation{
-private:
-    double** A,*b;
-    int size;   
-    bool flag;
-    void solve(){
-        for(int i=0;i<size;i++) for(int j=0;j<i;j++) b[i]-=A[i][j]*b[j]; //convert b into y;
-        for(int i=size-1;i>=0;i--){                                      //convert y into x;
-            for(int j=i+1;j<size;j++) b[i]-=b[j]*A[i][j];
-            b[i]/=A[i][i];
-        }
-        flag=true;
-    }
-public:
-    SolveEquation(double **mat,double* vec,int n):size(n),flag(false){
-        b=new double[n];
-        A=(new LUP(n,mat))->getAP();
-        for(int i=0;i<size;i++) b[i]=vec[(int)(A[size][i])];
-    }
-    void show(){
-        if(!flag) solve();
-        for(int i=0;i<size;i++) cout<<b[i]<<" ";
-    }
-};
+#include <cmath>
+#include <ostream>
+#include <stdexcept>
+#include <utility>
 
-void testLUP(){
-    double A[][4]={{2,0,2,0.6},{3,3,4,-2},{5,5,4,2},{-1,-2,3.4,-1}};
-    double **p=new double*[4];
-    for(int i=0;i<4;i++){
-        p[i]=new double[4]();
-        for(int j=0;j<4;j++) p[i][j]=A[i][j];
+namespace introalgo {
+
+LUP::LUP(Matrix mat) : n(static_cast<int>(mat.size())), A(std::move(mat)), P(static_cast<std::size_t>(n)) {
+    for (const auto& row : A)
+        if (static_cast<int>(row.size()) != n) throw std::invalid_argument("LUP: matrix must be square");
+    double scale = 0;
+    for (const auto& row : A)
+        for (double x : row) scale = std::fmax(scale, std::fabs(x));
+    for (int i = 0; i < n; i++) P[i] = i;
+    for (int i = 0; i < n; i++) {
+        int max = i;
+        for (int k = i + 1; k < n; k++)
+            if (std::fabs(A[k][i]) > std::fabs(A[max][i])) max = k;
+        if (std::fabs(A[max][i]) <= kSingularTolerance * scale || A[max][i] == 0.0)
+            throw std::runtime_error("LUP: matrix is singular");
+        if (max != i) {
+            std::swap(A[max], A[i]);  // swap the row vectors, no element copying
+            std::swap(P[max], P[i]);
+            swaps++;
+        }
+        for (int j = i + 1; j < n; j++) {
+            A[j][i] /= A[i][i];
+            for (int k = i + 1; k < n; k++) A[j][k] = A[j][k] - A[j][i] * A[i][k];
+        }
     }
-    LUP *lup=new LUP(4,p);
-    lup->show2();
 }
-void testSolveEquation(){      //answer is -3/19,-1/19,59/19;
-    double A[3][3]={{1,5,4},{2,0,3},{5,8,2}};
-    double b[3]={12,9,5};
-    double **p=new double*[3];
-    for(int i=0;i<3;i++){
-        p[i]=new double[3]();
-        for(int j=0;j<3;j++) p[i][j]=A[i][j];
+
+Matrix LUP::L() const {
+    Matrix l(static_cast<std::size_t>(n), std::vector<double>(static_cast<std::size_t>(n), 0.0));
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < i; j++) l[i][j] = A[i][j];
+        l[i][i] = 1;
     }
-    SolveEquation *se=new SolveEquation(p,b,3);
-    se->show();
+    return l;
 }
-int main(){
-    testSolveEquation();
+
+Matrix LUP::U() const {
+    Matrix u(static_cast<std::size_t>(n), std::vector<double>(static_cast<std::size_t>(n), 0.0));
+    for (int i = 0; i < n; i++)
+        for (int j = i; j < n; j++) u[i][j] = A[i][j];
+    return u;
 }
+
+std::vector<double> LUP::solve(const std::vector<double>& rhs) const {
+    if (static_cast<int>(rhs.size()) != n) throw std::invalid_argument("LUP::solve: wrong right-hand side size");
+    std::vector<double> b(static_cast<std::size_t>(n));
+    for (int i = 0; i < n; i++) b[i] = rhs[P[i]];  // apply the permutation
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < i; j++) b[i] -= A[i][j] * b[j];  // convert b into y (L y = P b)
+    for (int i = n - 1; i >= 0; i--) {                      // convert y into x (U x = y)
+        for (int j = i + 1; j < n; j++) b[i] -= b[j] * A[i][j];
+        b[i] /= A[i][i];
+    }
+    return b;
+}
+
+double LUP::determinant() const {
+    double det = (swaps % 2) ? -1.0 : 1.0;
+    for (int i = 0; i < n; i++) det *= A[i][i];
+    return det;
+}
+
+Matrix LUP::inverse() const {  // the original left getReverse() empty
+    Matrix inv(static_cast<std::size_t>(n), std::vector<double>(static_cast<std::size_t>(n), 0.0));
+    for (int col = 0; col < n; col++) {
+        std::vector<double> e(static_cast<std::size_t>(n), 0.0);
+        e[col] = 1;
+        const std::vector<double> x = solve(e);
+        for (int row = 0; row < n; row++) inv[row][col] = x[row];
+    }
+    return inv;
+}
+
+void LUP::show2(std::ostream& os) const {
+    os << 'P' << ":" << std::endl;
+    for (int i = 0; i < n; i++) os << P[i] << " ";
+    os << std::endl << 'A' << ":" << std::endl;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) os << A[i][j] << " ";
+        os << std::endl;
+    }
+}
+
+Matrix LUP::luNoPivot(Matrix a) {  // LU with space optimization
+    const int size = static_cast<int>(a.size());
+    for (const auto& row : a)
+        if (static_cast<int>(row.size()) != size) throw std::invalid_argument("LUP: matrix must be square");
+    for (int i = 0; i < size; i++) {
+        if (a[i][i] == 0.0) throw std::runtime_error("LUP::luNoPivot: zero pivot");
+        for (int j = i + 1; j < size; j++) {
+            a[j][i] /= a[i][i];
+            for (int k = i + 1; k < size; k++) a[j][k] = a[j][k] - a[j][i] * a[i][k];
+        }
+    }
+    return a;
+}
+
+SolveEquation::SolveEquation(const Matrix& mat, const std::vector<double>& vec)
+    : b(LUP(mat).solve(vec)) {}
+
+void SolveEquation::show(std::ostream& os) const {
+    for (std::size_t i = 0; i < b.size(); i++) os << b[i] << " ";
+}
+
+}  // namespace introalgo

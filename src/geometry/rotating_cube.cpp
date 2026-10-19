@@ -1,151 +1,77 @@
-#include <iostream>
-#include <vector>
-#include <math.h>
+#include "introalgo/geometry/rotating_cube.hpp"
 
-using namespace std;
+#include <cmath>
+#include <ostream>
+#include <stdexcept>
+#include <string>
 
-class cube{
-private:
-    int size;
-    double ***cb;
-    double **xAxisAlpha,**yAxisBeta,**zAxisTheta;
-    double **rotateMat;
+namespace introalgo {
 
-    void setxAxisAlpha(double alpha);
-    void setyAxisBeta(double beta);
-    void setzAxisTheta(double theta);
-    void setAxisAng(int idx,double ang); //x=0,y=1,z=2;
-    void setRotateMat(double ang);
-    double** matMult(double **a,double **b,int n,int k,int m);
-public:
-    static const int pi=M_PI;
-
-    cube(int s):size(s){
-        xAxisAlpha=new double*[3];
-        yAxisBeta=new double*[3];
-        zAxisTheta=new double*[3];
-        for(int i=0;i<3;i++){
-            xAxisAlpha[i]=new double[3]();
-            yAxisBeta[i]=new double[3]();
-            zAxisTheta[i]=new double[3]();
-        }
-        rotateMat=new double*[2]{new double[2],new double[2]};
-        cb=new double**[size];
-        for(int i=0;i<size;i++){
-            cb[i]=new double*[size];
-            for(int j=0;j<size;j++){
-                cb[i][j]=new double[3]();
-                cb[i][j][0]=j-size/2.0;
-                cb[i][j][1]=i-size/2.0;
-                cb[i][j][2]=size/2.0;
-
-            }
-        }
-    }
-    void getRotateMat(double alpha,double beta,double theta);
-    void getRotateMatd(double alphaD,double betaD,double thetaD);
-    void rotate();
-    void show();
-};
-void cube::show(){
-    char** cbshow=new char*[size];
-    for(int i=0;i<size;i++) {
-        cbshow[i]=new char[size];
-
-        for(int j=0;j<size;j++){
-            cout<<i<<" "<<j<<endl;
-            cout<<(cb[i][j][1]+size/2.0)<<' '<<(cb[i][j][0]+size/2.0)<<endl;
-            cbshow[(int)round(cb[i][j][1]+size/2.0)][(int)round(cb[i][j][0]+size/2.0)]='*';
-            //cout<<(cb[i][j][1])<<" "<<(cb[i][j][0])<<" "<<i<<" "<<j<<endl;
-            //cout<<(cb[i][j][1]+size/2.0)<<" "<<(cb[i][j][0]+size/2.0)<<endl;
-
-        }
-    }
-    for(int i=0;i<size;i++){
-        for(int j=0;j<size;j++){
-            cout<<' '<<cbshow[i][j]<<' ';
-        }
-        cout<<endl;
-    }
+Mat3 axisRotation(int idx, double ang) {
+    if (idx < 0 || idx > 2) throw std::invalid_argument("axisRotation: axis must be 0, 1 or 2");
+    // The 2x2 rotation acts on the two axes that follow idx cyclically (y,z for x; z,x for y; x,y for z).
+    const double rotateMat[2][2] = {{std::cos(ang), -std::sin(ang)}, {std::sin(ang), std::cos(ang)}};
+    Mat3 axisMat{};
+    axisMat[idx][idx] = 1;
+    for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 2; j++) axisMat[(idx + i + 1) % 3][(idx + j + 1) % 3] = rotateMat[i][j];
+    return axisMat;
 }
-void cube::rotate(){
-    double **rotMat= matMult(matMult(xAxisAlpha,yAxisBeta,3,3,3),zAxisTheta,3,3,3);
-    for(int i=0;i<size;i++){
-        cb[i]=matMult(cb[i],rotMat,size,3,3);
-        //for(int j=0;j<size;j++) cout<<cb[i][j][1]<<endl;
-    }
-}
-double** cube::matMult(double **a, double **b,int n,int k,int m) {
-    double **ans=new double*[n];
-    for(int i=0;i<n;i++){
-        ans[i]=new double[m]();
-        for(int j=0;j<m;j++){
-            for(int l=0;l<k;l++){
-                ans[i][j]+=a[i][l]*b[l][j];
-            }
-        }
-    }
+
+Mat3 multiply(const Mat3& a, const Mat3& b) {
+    Mat3 ans{};
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            for (int l = 0; l < 3; l++) ans[i][j] += a[i][l] * b[l][j];
     return ans;
 }
-void cube::getRotateMatd(double alphaD, double betaD, double thetaD) {
-    double alpha=fmod(alphaD,180)*pi/180.0;
-    double beta=fmod(betaD,180)*pi/180.0;
-    double theta=fmod(thetaD,180)*pi/180.0;
-    getRotateMat(alpha,beta,theta);
-}
-void cube::getRotateMat(double alpha, double beta, double theta) {
-    alpha=fmod(alpha,2*pi);
-    beta=fmod(beta,2*pi);
-    theta=fmod(theta,2*pi);
-    setxAxisAlpha(alpha);
-    setyAxisBeta(beta);
-    setzAxisTheta(theta);
 
+Vec3 rotateVec(const Mat3& m, const Vec3& v) {
+    Vec3 out{};
+    for (int i = 0; i < 3; i++)
+        for (int l = 0; l < 3; l++) out[i] += m[i][l] * v[l];
+    return out;
 }
-void cube::setxAxisAlpha(double alpha) {
-    setAxisAng(0,alpha);
+
+Cube::Cube(int s) : size(s), rotMat(axisRotation(0, 0.0)) {
+    if (s < 1) throw std::invalid_argument("Cube: size must be positive");
+    cb.resize(static_cast<std::size_t>(size) * static_cast<std::size_t>(size));
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            cb[static_cast<std::size_t>(i * size + j)] = {j - size / 2.0, i - size / 2.0, size / 2.0};
 }
-void cube::setyAxisBeta(double beta) {
-    setAxisAng(1,beta);
+
+void Cube::getRotateMat(double alpha, double beta, double theta) {
+    rotMat = multiply(multiply(axisRotation(0, std::fmod(alpha, 2 * kPi)), axisRotation(1, std::fmod(beta, 2 * kPi))),
+                      axisRotation(2, std::fmod(theta, 2 * kPi)));
 }
-void cube::setzAxisTheta(double theta) {
-    setAxisAng(2,theta);
+
+void Cube::getRotateMatd(double alphaD, double betaD, double thetaD) {
+    const double alpha = std::fmod(alphaD, 360) * kPi / 180.0;
+    const double beta = std::fmod(betaD, 360) * kPi / 180.0;
+    const double theta = std::fmod(thetaD, 360) * kPi / 180.0;
+    getRotateMat(alpha, beta, theta);
 }
-void cube::setAxisAng(int idx,double ang) {
-    setRotateMat(ang);
-    double **AxisMat;
-    switch (idx) {
-        case 0:
-            AxisMat=xAxisAlpha;
-            break;
-        case 1:
-            AxisMat=yAxisBeta;
-            break;
-        case 2:
-            AxisMat=zAxisTheta;
-            break;
+
+void Cube::rotate() {
+    for (Vec3& p : cb) p = rotateVec(rotMat, p);
+}
+
+void Cube::show(std::ostream& os) const {
+    // The rotated face stays within a disc of radius size * sqrt(3) / 2 around the origin.
+    const int dim = static_cast<int>(std::ceil(size * std::sqrt(3.0))) + 1;
+    std::vector<std::string> canvas(static_cast<std::size_t>(dim), std::string(static_cast<std::size_t>(dim), ' '));
+    const double centre = (dim - 1) / 2.0;
+    for (const Vec3& p : cb) {
+        const long col = std::lround(p[0] + centre);
+        const long row = std::lround(centre - p[1]);  // y points up on the screen
+        if (col >= 0 && col < dim && row >= 0 && row < dim)
+            canvas[static_cast<std::size_t>(row)][static_cast<std::size_t>(col)] = '*';
     }
-    for(int i=0;i<3;i++) for(int j=0;j<3;j++) AxisMat[i][j]=0;
-    AxisMat[idx][idx]=1;
-    for(int i=0;i<2;i++){
-        for(int j=0;j<2;j++){
-            AxisMat[(idx+i+1)%3][(idx+j+1)%3]=rotateMat[i][j];
-        }
+    for (const std::string& line : canvas) {
+        for (char c : line) os << c << ' ';
+        os << std::endl;
     }
-
-}
-void cube::setRotateMat(double ang) {
-    rotateMat[0][0]=cos(ang);
-    rotateMat[0][1]=-sin(ang);
-    rotateMat[1][0]=sin(ang);
-    rotateMat[1][1]=cos(ang);
 }
 
-int main(){
-    cube *c=new cube(50);
-    c->getRotateMat(M_PI/2,M_PI/6,M_PI/3);
-    c->rotate();
-    //c->show();
-    int a=0;
-    //cin>>a;
-}
+}  // namespace introalgo
