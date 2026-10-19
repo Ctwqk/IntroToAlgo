@@ -1,0 +1,106 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(IntroToAlgo
+  VERSION 1.0.0
+  DESCRIPTION "Classic algorithms and data structures from an algorithms course, in modern C++"
+  LANGUAGES CXX)
+
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
+
+option(INTROALGO_BUILD_EXAMPLES "Build the example programs (the original demos)" ON)
+option(INTROALGO_BUILD_TESTS "Build the GoogleTest suite" ON)
+option(INTROALGO_BUILD_BENCHMARKS "Build the complexity-scaling benchmark" ON)
+option(INTROALGO_SANITIZE "Build everything with AddressSanitizer + UndefinedBehaviorSanitizer" OFF)
+option(INTROALGO_WERROR "Treat compiler warnings as errors" OFF)
+option(INTROALGO_USE_SYSTEM_GTEST "Use an installed GoogleTest instead of downloading one" OFF)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+if(INTROALGO_SANITIZE)
+  if(MSVC)
+    message(FATAL_ERROR "INTROALGO_SANITIZE is only supported with GCC/Clang")
+  endif()
+  add_compile_options(-fsanitize=address,undefined -fno-sanitize-recover=undefined
+                      -fno-omit-frame-pointer -g)
+  add_link_options(-fsanitize=address,undefined)
+endif()
+
+# Warning flags are attached to our own targets only (not to GoogleTest).
+add_library(introalgo_warnings INTERFACE)
+if(MSVC)
+  target_compile_options(introalgo_warnings INTERFACE /W4)
+  if(INTROALGO_WERROR)
+    target_compile_options(introalgo_warnings INTERFACE /WX)
+  endif()
+else()
+  target_compile_options(introalgo_warnings INTERFACE -Wall -Wextra -Wpedantic -Wshadow)
+  if(INTROALGO_WERROR)
+    target_compile_options(introalgo_warnings INTERFACE -Werror)
+  endif()
+endif()
+
+# ----------------------------------------------------------------------------
+# Library
+# ----------------------------------------------------------------------------
+set(INTROALGO_SOURCES
+  src/divide_and_conquer/out_of_ranking.cpp
+)
+
+add_library(introalgo STATIC ${INTROALGO_SOURCES})
+add_library(introalgo::introalgo ALIAS introalgo)
+target_include_directories(introalgo PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_link_libraries(introalgo PRIVATE introalgo_warnings)
+
+install(TARGETS introalgo ARCHIVE DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include)
+
+enable_testing()
+
+# ----------------------------------------------------------------------------
+# Examples: the original programs' main() functions, one executable each
+# ----------------------------------------------------------------------------
+if(INTROALGO_BUILD_EXAMPLES)
+  function(introalgo_add_example name source)
+    add_executable(${name} ${source})
+    target_link_libraries(${name} PRIVATE introalgo introalgo_warnings)
+    set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+                                             ${CMAKE_BINARY_DIR}/examples)
+    add_test(NAME example.${name} COMMAND ${name})
+    set_tests_properties(example.${name} PROPERTIES LABELS example)
+  endfunction()
+
+  introalgo_add_example(out_of_ranking_demo examples/divide_and_conquer/out_of_ranking_demo.cpp)
+endif()
+
+# ----------------------------------------------------------------------------
+# Tests
+# ----------------------------------------------------------------------------
+if(INTROALGO_BUILD_TESTS)
+  include(GoogleTest)
+  if(INTROALGO_USE_SYSTEM_GTEST)
+    find_package(GTest REQUIRED)
+  else()
+    include(FetchContent)
+    set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_Declare(googletest
+      URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.tar.gz
+      URL_HASH SHA256=65fab701d9829d38cb77c14acdc431d2108bfdbf8979e40eb8ae567edf10b27c
+      DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+    FetchContent_MakeAvailable(googletest)
+  endif()
+
+  add_executable(introalgo_tests
+    tests/test_out_of_ranking.cpp
+  )
+  target_include_directories(introalgo_tests PRIVATE tests)
+  target_link_libraries(introalgo_tests PRIVATE introalgo introalgo_warnings GTest::gtest_main)
+  gtest_discover_tests(introalgo_tests DISCOVERY_MODE PRE_TEST PROPERTIES LABELS unit)
+endif()

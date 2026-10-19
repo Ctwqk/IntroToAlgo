@@ -1,42 +1,32 @@
-#include <iostream>
-#include <vector>
+#include "introalgo/divide_and_conquer/out_of_ranking.hpp"
 
-using namespace std;
+namespace introalgo {
 
-class OutOfRanking{
-private:   
-    int count;
-public:
-    OutOfRanking():count(0){}
-    void user_similarity(vector<int> &RankA);
-    void auxilary_merge(vector<int> &nums,int i,int j);
-};
-
-void OutOfRanking::user_similarity(vector<int> &RankA){
-    int n=RankA.size();
-    auxilary_merge(RankA,0,n-1);
-    cout<<"similiarity is: "<<count;
+long long OutOfRanking::user_similarity(std::vector<int>& RankA) {
+    count = 0;
+    std::vector<int> ext(RankA.size());
+    auxilary_merge(RankA, ext, 0, RankA.size());
+    return count;
 }
 
-void OutOfRanking::auxilary_merge(vector<int> &nums,int i,int j){
-    if(i>=j) return;
-    int mid=(i+j)/2;
-    auxilary_merge(nums,i,mid);
-    auxilary_merge(nums,mid+1,j);
-    int *ext=new int[j-i+1];
-    int l=i,r=mid+1,idx=0;
-    while(l<=mid&&r<=j){
-        while(l<=mid&&nums[l]<nums[r])ext[idx++]=nums[l++];
-        count+=mid-l+1;
-        ext[idx++]=nums[r++];
+void OutOfRanking::auxilary_merge(std::vector<int>& nums, std::vector<int>& ext, std::size_t lo,
+                                  std::size_t hi) {
+    if (hi - lo < 2) return;
+    const std::size_t mid = lo + (hi - lo) / 2;
+    auxilary_merge(nums, ext, lo, mid);
+    auxilary_merge(nums, ext, mid, hi);
+
+    std::size_t l = lo, r = mid, idx = lo;
+    while (l < mid && r < hi) {
+        // Equal values are not an inversion, so the left element goes first on ties.
+        while (l < mid && nums[l] <= nums[r]) ext[idx++] = nums[l++];
+        // Every element still waiting on the left is greater than nums[r].
+        count += static_cast<long long>(mid - l);
+        ext[idx++] = nums[r++];
     }
-    while(l<=mid) ext[idx++]=nums[l++];
-    while(r<=j) ext[idx++]=nums[r++];
-    for(int k=i;k<=j;k++)nums[k]=ext[k-i];
+    while (l < mid) ext[idx++] = nums[l++];
+    while (r < hi) ext[idx++] = nums[r++];
+    for (std::size_t k = lo; k < hi; ++k) nums[k] = ext[k];
 }
 
-int main(){
-    vector<int> RankA{2,4,5,1,3,6,7};
-    OutOfRanking *o=new OutOfRanking();
-    o->user_similarity(RankA);
-}
+}  // namespace introalgo
