@@ -1,0 +1,16 @@
+# Formatting for the whole code base: `clang-format -i $(git ls-files '*.cpp' '*.hpp')`
+# (CI checks with the version pinned in .github/workflows/ci.yml).
+BasedOnStyle: Google
+Language: Cpp
+Standard: c++17
+IndentWidth: 4
+ContinuationIndentWidth: 4
+AccessModifierOffset: -4
+ColumnLimit: 100
+PointerAlignment: Left
+DerivePointerAlignment: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: true
+IncludeBlocks: Preserve
+SortIncludes: CaseSensitive
