@@ -5,6 +5,7 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "introalgo/strings/trie.hpp"
@@ -137,4 +138,27 @@ TEST(Trie, RandomizedOperationsMatchStdSet) {
         }
     }
     EXPECT_TRUE(t.consistent());
+}
+
+TEST(Trie, MovedFromTriesRemainUsable) {
+    Trie source;
+    source.inserts({"", "alpha", "alps"});
+    Trie moved(std::move(source));
+    EXPECT_EQ(moved.words(), (std::vector<std::string>{"", "alpha", "alps"}));
+    EXPECT_EQ(source.size(), 0u);
+    EXPECT_FALSE(source.search(""));
+    EXPECT_FALSE(source.del("alpha"));
+    EXPECT_TRUE(source.words().empty());
+    EXPECT_TRUE(source.consistent());
+    EXPECT_TRUE(source.insert("new"));
+    source = std::move(moved);
+    EXPECT_EQ(source.size(), 3u);
+    EXPECT_TRUE(source.consistent());
+    EXPECT_TRUE(moved.insert("reused"));
+    EXPECT_EQ(moved.size(), 1u);
+    EXPECT_TRUE(moved.consistent());
+    Trie& alias = source;
+    source = std::move(alias);
+    EXPECT_EQ(source.size(), 3u);
+    EXPECT_TRUE(source.consistent());
 }

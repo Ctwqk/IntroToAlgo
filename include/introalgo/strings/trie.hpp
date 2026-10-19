@@ -20,8 +20,9 @@ class Trie {
 public:
     Trie();
     ~Trie();
-    Trie(Trie&&) noexcept;
-    Trie& operator=(Trie&&) noexcept;
+    /// Transfers ownership; the source becomes an empty, reusable trie.
+    Trie(Trie&&);
+    Trie& operator=(Trie&&);
     Trie(const Trie&) = delete;
     Trie& operator=(const Trie&) = delete;
 

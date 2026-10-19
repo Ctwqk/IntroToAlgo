@@ -19,6 +19,27 @@ VanEmdeBoas::VanEmdeBoas(int universe) {
     }
 }
 
+VanEmdeBoas::VanEmdeBoas(VanEmdeBoas&& other) noexcept : VanEmdeBoas(2) {
+    swap(other);
+}
+
+VanEmdeBoas& VanEmdeBoas::operator=(VanEmdeBoas&& other) noexcept {
+    if (this != &other) {
+        VanEmdeBoas moved(std::move(other));
+        swap(moved);
+    }
+    return *this;
+}
+
+void VanEmdeBoas::swap(VanEmdeBoas& other) noexcept {
+    std::swap(u, other.u);
+    std::swap(lowBits, other.lowBits);
+    std::swap(min, other.min);
+    std::swap(max, other.max);
+    summary.swap(other.summary);
+    cluster.swap(other.cluster);
+}
+
 VanEmdeBoas& VanEmdeBoas::clusterAt(int h) {
     auto& slot = cluster[static_cast<std::size_t>(h)];
     if (!slot) slot.reset(new VanEmdeBoas(1 << lowBits));

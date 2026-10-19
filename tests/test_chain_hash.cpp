@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <map>
 #include <set>
+#include <utility>
 #include <vector>
 
 #include "introalgo/data_structures/chain_hash.hpp"
@@ -159,4 +160,25 @@ TEST(ChainHash, RandomizedOperationsMatchMultiset) {
         if (step % 100 == 0) expectInvariants(h, oracle);
     }
     expectInvariants(h, oracle);
+}
+
+TEST(ChainHash, MovedFromTablesRemainUsable) {
+    ChainHash source(7);
+    source.insert(12);
+    source.insert(-2);
+    ChainHash moved(std::move(source));
+    expectInvariants(moved, {12, -2});
+    EXPECT_EQ(source.size(), 0);
+    EXPECT_DOUBLE_EQ(source.loadFactor(), 0);
+    EXPECT_EQ(source.search(12), nullptr);
+    EXPECT_FALSE(source.delete_val(12));
+    source.sortedInsert(5);
+    expectInvariants(source, {5});
+    source = std::move(moved);
+    expectInvariants(source, {12, -2});
+    moved.insert(6);
+    expectInvariants(moved, {6});
+    ChainHash& alias = source;
+    source = std::move(alias);
+    expectInvariants(source, {12, -2});
 }

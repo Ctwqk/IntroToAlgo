@@ -1,13 +1,25 @@
 #include "introalgo/strings/trie.hpp"
 
 #include <ostream>
+#include <utility>
 
 namespace introalgo {
 
 Trie::Trie() : root(new Node) {}
 Trie::~Trie() = default;
-Trie::Trie(Trie&&) noexcept = default;
-Trie& Trie::operator=(Trie&&) noexcept = default;
+Trie::Trie(Trie&& other) : Trie() {
+    root.swap(other.root);
+    std::swap(count, other.count);
+}
+
+Trie& Trie::operator=(Trie&& other) {
+    if (this != &other) {
+        Trie moved(std::move(other));
+        root.swap(moved.root);
+        std::swap(count, moved.count);
+    }
+    return *this;
+}
 
 char Trie::decode(int val) {
     if (val < 0 || val > 25) return '!';

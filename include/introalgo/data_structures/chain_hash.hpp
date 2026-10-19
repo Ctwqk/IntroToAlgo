@@ -25,7 +25,8 @@ public:
     ~ChainHash();
     ChainHash(const ChainHash& other);
     ChainHash& operator=(ChainHash other);  // copy-and-swap
-    ChainHash(ChainHash&& other) noexcept;
+    /// Transfers ownership; the source becomes an empty, reusable one-bucket table.
+    ChainHash(ChainHash&& other);
 
     /// Bucket index of a value, always in [0, bucketCount()) -- also for negative values.
     int Hash_func(int key1) const;

@@ -9,11 +9,13 @@ namespace introalgo {
 ///
 /// The structure is the recursive one of the original `vBE` class: every node keeps its minimum
 /// and maximum (the minimum is *not* stored in a cluster), a summary structure over the
-/// non-empty clusters and sqrt(u) clusters.  member / insert / del / successor / predecessor are
-/// O(log log u).  Compared with the original, the universe is rounded up to a power of two, the
-/// split into clusters is done with shifts (the original used log2 in the index arithmetic and
-/// never allocated its clusters) and clusters are created on first use, so the memory is
-/// proportional to the number of stored keys times log log u rather than to u.
+/// non-empty clusters and sqrt(u) clusters. Queries are O(log log u); updates have that
+/// traversal cost plus allocation/deallocation of cluster arrays.  Compared with the original, the
+/// universe is rounded up to a power of two, the split into clusters is done with shifts (the
+/// original used log2 in the index arithmetic and never allocated its clusters). Clusters are
+/// created on first use, but each allocated node reserves an array of child pointers: construction
+/// uses O(sqrt(u)) space/time, and the full structure uses O(u) space. Lazy allocation does not
+/// guarantee O(n log log u) space.
 ///
 /// "No element" is reported as -1, as in the original.
 class VanEmdeBoas {
@@ -21,6 +23,12 @@ public:
     /// `universe` is rounded up to the next power of two (and to at least 2); throws
     /// std::invalid_argument for values above 2^30.
     explicit VanEmdeBoas(int universe);
+
+    /// Transfers ownership; the source becomes an empty, reusable universe of size 2.
+    VanEmdeBoas(VanEmdeBoas&& other) noexcept;
+    VanEmdeBoas& operator=(VanEmdeBoas&& other) noexcept;
+    VanEmdeBoas(const VanEmdeBoas&) = delete;
+    VanEmdeBoas& operator=(const VanEmdeBoas&) = delete;
 
     /// Size of the universe after rounding.
     int universe() const { return u; }
@@ -53,6 +61,7 @@ private:
     bool emptyInsert(int x);
     bool insertImpl(int x);
     bool delImpl(int x);
+    void swap(VanEmdeBoas& other) noexcept;
 };
 
 }  // namespace introalgo

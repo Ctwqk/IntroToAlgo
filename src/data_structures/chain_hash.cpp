@@ -31,9 +31,9 @@ ChainHash& ChainHash::operator=(ChainHash other) {
     return *this;
 }
 
-ChainHash::ChainHash(ChainHash&& other) noexcept : map(std::move(other.map)), count(other.count) {
-    other.map.clear();
-    other.count = 0;
+ChainHash::ChainHash(ChainHash&& other) : ChainHash(1) {
+    map.swap(other.map);
+    std::swap(count, other.count);
 }
 
 void ChainHash::clear() {

@@ -2,6 +2,7 @@
 
 #include <iterator>
 #include <set>
+#include <utility>
 
 #include "introalgo/data_structures/van_emde_boas.hpp"
 #include "test_utils.hpp"
@@ -127,4 +128,24 @@ TEST(VanEmdeBoas, LargeUniverseIsSparseInMemory) {
     EXPECT_EQ(v.successor(1), 999999999);
     for (int k : keys) v.del(k);
     EXPECT_TRUE(v.empty());
+}
+
+TEST(VanEmdeBoas, MoveTransfersKeysAndLeavesAnEmptyUsableUniverse) {
+    VanEmdeBoas source(16);
+    for (int key : {1, 3, 9, 14}) source.insert(key);
+    VanEmdeBoas moved(std::move(source));
+    expectSameAsSet(moved, {1, 3, 9, 14});
+    EXPECT_TRUE(source.empty());
+    EXPECT_EQ(source.universe(), 2);
+    EXPECT_FALSE(source.member(1));
+    EXPECT_EQ(source.successor(0), -1);
+    EXPECT_TRUE(source.insert(1));
+    source = std::move(moved);
+    expectSameAsSet(source, {1, 3, 9, 14});
+    EXPECT_TRUE(moved.empty());
+    EXPECT_TRUE(moved.insert(0));
+    expectSameAsSet(moved, {0});
+    VanEmdeBoas& alias = source;
+    source = std::move(alias);
+    expectSameAsSet(source, {1, 3, 9, 14});
 }
