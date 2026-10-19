@@ -20,7 +20,8 @@ int bfsEditDistance(const std::string& from, const std::string& to) {
     std::queue<std::pair<std::string, int>> q;
     q.push({from, 0});
     while (!q.empty()) {
-        auto [s, d] = q.front();
+        const std::string s = q.front().first;
+        const int d = q.front().second;
         q.pop();
         if (s == to) return d;
         auto visit = [&](const std::string& next) {
