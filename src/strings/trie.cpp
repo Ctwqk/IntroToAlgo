@@ -1,172 +1,143 @@
-#include <iostream>
-#include <vector>
-#include <stack>
-#include <map>
-using namespace std;
+#include "introalgo/strings/trie.hpp"
 
-class TrieNode{  //tring some trie;
-public:
-private:
-    TrieNode **children;
-    int *labels;
-    int val;
-    bool isEnd;
-    bool visit;
-    char decode(int val){
-        if(val==-1) return '#';
-        if(val<26) return 'a'+val;
-        if(val<52&&val>=26) return 'A'+val-26;
-        return '!';
-    }
-    int judge(char c){
-        int pos=c-'a';
-       // cout<<c<<" "<<pos<<endl;
-        if(pos<0||pos>25) pos=c-'A';
-        if(pos<0||pos>25) return -1;
-        return pos;
-    }
-    bool makeUp(stack<TrieNode*> dfs,stack<int> poss){
-        while(dfs.top()){
-            dfs.top()->labels[poss.top()]--;
-            dfs.pop();
-            poss.pop();
-        }
-        return true;
-    }
-public:
-    TrieNode():val(-1),isEnd(false),visit(false){
-        labels=new int[52]();
-    }
-    TrieNode(int val, bool ie=false):val(val),isEnd(ie),visit(false){
-        children=new TrieNode*[52];
-        labels=new int[52]();
-    }
-    bool insert(string word);
-    bool inserts(vector<string> words);
-    bool del(string word);
-    bool dels(vector<string> word);
-    bool search(string s);
-    bool* searchs(vector<string> strings);
-    bool change(string s,string tars);
-    void show();
-};
-bool TrieNode::change(string s,string tars){
-    return this->del(s)&&this->insert(tars);
+#include <ostream>
+
+namespace introalgo {
+
+Trie::Trie() : root(new Node) {}
+Trie::~Trie() = default;
+Trie::Trie(Trie&&) noexcept = default;
+Trie& Trie::operator=(Trie&&) noexcept = default;
+
+char Trie::decode(int val) {
+    if (val < 0 || val > 25) return '!';
+    return static_cast<char>('a' + val);
 }
-bool TrieNode::inserts(vector<string> strings){
-    bool flag=true;
-    for(string s:strings)flag!=insert(s);
-    return flag;
+
+// check whether an incoming letter is valid, a-z or A-Z
+int Trie::judge(char c) {
+    int pos = c - 'a';
+    if (pos < 0 || pos > 25) pos = c - 'A';
+    if (pos < 0 || pos > 25) return -1;
+    return pos;
 }
-bool TrieNode::insert(string word){
-    if(this->val!=-1) cout<<"inserting at a non root node, think twice"<<endl;
-    TrieNode *p=this;
-    int pos;
-    for(char c:word){
-        pos=judge(c);
-        if(pos==-1) return false;
-        p->labels[pos]++;
-        if(p->labels[pos]<=1) p->children[pos]=new TrieNode(pos);
-        p=p->children[pos];
-    }
-    p->isEnd=true;
+
+bool Trie::valid(const std::string& s) {
+    for (char c : s)
+        if (judge(c) == -1) return false;
     return true;
 }
-bool TrieNode::dels(vector<string> strings){
-    bool flag=true;
-    for(string s:strings)flag&=del(s);
+
+bool Trie::insert(const std::string& word) {
+    if (!valid(word)) return false;  // nothing has been touched yet
+    if (search(word)) return true;
+    Node* p = root.get();
+    for (char c : word) {
+        const int pos = judge(c);
+        if (++p->labels[pos] <= 1) p->children[pos].reset(new Node);
+        p = p->children[pos].get();
+    }
+    p->isEnd = true;
+    ++count;
+    return true;
+}
+
+bool Trie::inserts(const std::vector<std::string>& strings) {
+    bool flag = true;
+    for (const auto& s : strings) flag &= insert(s);
     return flag;
 }
-bool TrieNode::del(string s){  //not tested
-    if(this->val!=-1) cout<<"deleting at a non root node, think twice"<<endl;
-    if(!search(s)) return false;
-    TrieNode *p=this;
-    int pos;
-    stack<TrieNode*> dfs;
-    stack<int> poss;
-    for(char c:s){
-        pos=judge(c);
-        if(pos==-1) makeUp(dfs,poss);
-        poss.push(pos);
-        dfs.push(p);
-        p->labels[pos]--;
-        p=p->children[pos];      
+
+bool Trie::del(const std::string& s) {
+    if (!search(s)) return false;
+    Node* p = root.get();
+    for (char c : s) {
+        const int pos = judge(c);
+        Node* next = p->children[pos].get();
+        if (--p->labels[pos] == 0) {
+            // No other word uses this edge: the whole remaining path can go.
+            p->children[pos].reset();
+            --count;
+            return true;
+        }
+        p = next;
     }
-    p->isEnd=false;
+    p->isEnd = false;  // the word is a prefix of other words (or is the empty word)
+    --count;
+    return true;
 }
-bool* TrieNode::searchs(vector<string> strings){
-    int n=strings.size();
-    bool* ans=new bool[n];
-    for(int i=0;i<n;i++){
-        ans[i]=search(strings[i]);
-    }
-    return ans;
+
+bool Trie::dels(const std::vector<std::string>& strings) {
+    bool flag = true;
+    for (const auto& s : strings) flag &= del(s);
+    return flag;
 }
-bool TrieNode::search(string s){
-    TrieNode *p=this;
-    int pos;
-    for(char c:s){
-        pos=judge(c);
-        if(p->labels[pos]<=0) return false;
-        p=p->children[pos];
+
+bool Trie::search(const std::string& s) const {
+    const Node* p = root.get();
+    for (char c : s) {
+        const int pos = judge(c);
+        if (pos == -1 || p->labels[pos] <= 0) return false;
+        p = p->children[pos].get();
     }
     return p->isEnd;
 }
-void TrieNode::show(){
-    stack<TrieNode*> dfs;
-    string ans;
-    TrieNode* p;
-    dfs.push(this);
-    int flag=0;
-    while(dfs.size()){
-        p=dfs.top();
-        flag=0;
-        for(int i=0;i<52;i++){
-            if(p->labels[i]>0&&!p->children[i]->visit){
-                dfs.push(p->children[i]);
-                ans=ans+decode(i);
-                flag=1;
-                break;
+
+std::vector<bool> Trie::searchs(const std::vector<std::string>& strings) const {
+    std::vector<bool> ans;
+    ans.reserve(strings.size());
+    for (const auto& s : strings) ans.push_back(search(s));
+    return ans;
+}
+
+bool Trie::change(const std::string& s, const std::string& tars) {
+    if (!valid(tars) || !search(s)) return false;
+    return del(s) && insert(tars);
+}
+
+std::vector<std::string> Trie::words() const {
+    std::vector<std::string> out;
+    std::string current;
+    // Recursion depth is bounded by the length of the longest word.
+    struct Walker {
+        std::vector<std::string>& out;
+        std::string& cur;
+        void walk(const Node* p) {
+            if (p->isEnd) out.push_back(cur);
+            for (int i = 0; i < 26; i++) {
+                if (p->labels[i] > 0) {
+                    cur.push_back(decode(i));
+                    walk(p->children[i].get());
+                    cur.pop_back();
+                }
             }
         }
-        if(!flag) {
-            dfs.pop();
-            if(p->isEnd) cout<<ans<<endl;
-            p->visit=true;
-            ans=ans.substr(0,ans.size()-1);
+    } w{out, current};
+    w.walk(root.get());
+    return out;
+}
+
+void Trie::show(std::ostream& os) const {
+    for (const auto& w : words()) os << w << std::endl;
+}
+
+bool Trie::consistent() const {
+    struct Checker {
+        // Returns the number of words in the subtree, or -1 if some counter is wrong.
+        static long long check(const Node* p) {
+            long long total = p->isEnd ? 1 : 0;
+            for (int i = 0; i < 26; i++) {
+                if (p->labels[i] < 0) return -1;
+                if ((p->labels[i] > 0) != (p->children[i] != nullptr)) return -1;
+                if (p->labels[i] == 0) continue;
+                const long long below = check(p->children[i].get());
+                if (below != p->labels[i]) return -1;
+                total += below;
+            }
+            return total;
         }
-    }
+    };
+    return Checker::check(root.get()) == static_cast<long long>(count);
 }
 
-void detectSpam(){
-    vector<string> K{"asda","aebrq","bqrqwf","VASVE","vasdawdf","dasegawggdav","efwd","asd","davcase","vwdfd","davsef"};
-    string message="I am asda, u r asd, please bqrqwf to VASAE, so that u efwd a dasegawggdav";
-    vector<string> wordInMessage;
-    while(true){
-        size_t pos=message.find(' ');
-        if(pos==string::npos) break;
-        wordInMessage.push_back(message.substr(0,pos));
-        message=message.substr(pos+1,message.size()-pos);
-        string s=wordInMessage.back();
-        char c=s.back();
-        if(c<65||(c>90&&c<97)||c>122) wordInMessage.back()=s.substr(0,s.size()-1);
-    }
-    wordInMessage.push_back(message);
-
-    TrieNode* root=new TrieNode(-1);
-    for (string s:K){
-        root->insert(s);
-    }
-
-    for(string s:wordInMessage){
-        if(root->search(s)){
-            cout<<"decteted: "<<s<<endl;
-        }
-    }
-
-}
-
-
-int main(){
-    detectSpam();
-}
+}  // namespace introalgo

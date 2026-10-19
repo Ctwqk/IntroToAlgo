@@ -1,47 +1,44 @@
-#include <iostream>
-#include <vector>
-using namespace std;
-class KMP{
-private:
-    string target;
-    string pattern;
-    int *lps,n,m;
-    void getLPS(){         //calculating the prefix lengths;
-        int len=0;
-        for(int i=1;i<n;i++){
-            if(pattern[i]==pattern[len])len++;
-            else while(len&&pattern[i]!=pattern[len]) len=lps[len-1];
-            lps[i]=len;
-        }
-        //for(int i=0;i<n;i++) cout<<lps[i]<<" ";
-        //cout<<endl;
+#include "introalgo/strings/kmp.hpp"
+
+#include <utility>
+
+namespace introalgo {
+
+KMP::KMP(std::string s1, std::string s2)
+    : target(std::move(s1)),
+      pattern(std::move(s2)),
+      lps_(pattern.size(), 0),
+      n(static_cast<int>(pattern.size())),
+      m(static_cast<int>(target.size())) {
+    getLPS();
+}
+
+void KMP::getLPS() {
+    int len = 0;
+    for (int i = 1; i < n; i++) {
+        // Fall back through shorter borders until the next character extends one.
+        while (len && pattern[i] != pattern[len]) len = lps_[len - 1];
+        if (pattern[i] == pattern[len]) len++;
+        lps_[i] = len;
     }
-public:
-    KMP(string s1,string s2):target(s1),pattern(s2){
-        n=s2.size(),m=s1.size();
-        lps=new int[n]();
-        getLPS();
-    }
-    vector<int> calculateKMP(){
-        int i=0,j=0;
-        vector<int> ans;
-        while(j<m){
-            if(target[j]==pattern[i]){
-                if(++i==n)ans.push_back(j-n+1);
-                j++;
+}
+
+std::vector<int> KMP::calculateKMP() const {
+    std::vector<int> ans;
+    if (n == 0) return ans;
+    int i = 0, j = 0;
+    while (j < m) {
+        if (target[j] == pattern[i]) {
+            if (++i == n) {
+                ans.push_back(j - n + 1);
+                i = lps_[i - 1];  // keep going: the next match may overlap this one
             }
-            else i>0?i=lps[i-1]:j++;
+            j++;
+        } else {
+            i > 0 ? i = lps_[i - 1] : j++;
         }
-        return ans;
     }
-};
-void testKMP(){
-    string s1="TATTACTAGCTACTGTACTCGGCAGCCTATTCACTAGCTACTGTACTGGAGTACTATTCGGTGCGTATTCGACTAGCTACTGTACTGATAACGTACGT";
-    string s2="ACTAGCTACTGTACT";
-    KMP *k=new KMP(s1,s2);
-    vector<int> ans=k->calculateKMP();
-    for(int i=0;i<ans.size();i++) cout<<ans[i]<<" ";
+    return ans;
 }
-int main(){
-    testKMP();
-}
+
+}  // namespace introalgo

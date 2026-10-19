@@ -57,6 +57,9 @@ set(INTROALGO_SOURCES
   src/dynamic_programming/max_quad_exp.cpp
   src/dynamic_programming/obst.cpp
   src/dynamic_programming/rod_cutting.cpp
+  src/strings/kmp.cpp
+  src/strings/rolling_hash.cpp
+  src/strings/trie.cpp
 )
 
 add_library(introalgo STATIC ${INTROALGO_SOURCES})
@@ -93,6 +96,10 @@ if(INTROALGO_BUILD_EXAMPLES)
   introalgo_add_example(max_quad_exp_demo examples/dynamic_programming/max_quad_exp_demo.cpp)
   introalgo_add_example(obst_demo examples/dynamic_programming/obst_demo.cpp)
   introalgo_add_example(rod_cutting_demo examples/dynamic_programming/rod_cutting_demo.cpp)
+  introalgo_add_example(kmp_demo examples/strings/kmp_demo.cpp)
+  introalgo_add_example(rolling_hash_demo examples/strings/rolling_hash_demo.cpp)
+  introalgo_add_example(trie_demo examples/strings/trie_demo.cpp)
+  introalgo_add_example(assignment6_spam_and_dna examples/assignment6_spam_and_dna.cpp)
 endif()
 
 # ----------------------------------------------------------------------------
@@ -123,6 +130,9 @@ if(INTROALGO_BUILD_TESTS)
     tests/test_max_quad_exp.cpp
     tests/test_obst.cpp
     tests/test_rod_cutting.cpp
+    tests/test_kmp.cpp
+    tests/test_rolling_hash.cpp
+    tests/test_trie.cpp
   )
   target_include_directories(introalgo_tests PRIVATE tests)
   target_link_libraries(introalgo_tests PRIVATE introalgo introalgo_warnings GTest::gtest_main)
