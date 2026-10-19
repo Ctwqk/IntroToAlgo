@@ -1,4 +1,5 @@
-// Original demo of spinning.cpp (which printed nothing): rotate a 9 x 9 face of the cube and draw it.
+// Original demo of spinning.cpp (which printed nothing): rotate a 9 x 9 face of the cube and draw
+// it.
 #include <iostream>
 
 #include "introalgo/geometry/rotating_cube.hpp"

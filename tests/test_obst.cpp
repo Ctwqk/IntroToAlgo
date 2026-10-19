@@ -50,7 +50,8 @@ double costOf(const SubTree& t, const std::vector<double>& p, const std::vector<
 
 double bruteForceCost(const std::vector<double>& p, const std::vector<double>& q) {
     double best = std::numeric_limits<double>::infinity();
-    for (const auto& t : enumerate(1, static_cast<int>(p.size()))) best = std::min(best, costOf(t, p, q));
+    for (const auto& t : enumerate(1, static_cast<int>(p.size())))
+        best = std::min(best, costOf(t, p, q));
     return best;
 }
 

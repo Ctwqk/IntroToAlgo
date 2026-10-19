@@ -6,7 +6,8 @@
 
 int main() {
     std::string target =
-        "TATTACTAGCTACTGTACTCGGCAGCCTATTCACTAGCTACTGTACTGGAGTACTATTCGGTGCGTATTCGACTAGCTACTGTACTGATAACGTACGT";
+        "TATTACTAGCTACTGTACTCGGCAGCCTATTCACTAGCTACTGTACTGGAGTACTATTCGGTGCGTATTCGACTAGCTACTGTACTGATA"
+        "ACGTACGT";
     std::string pattern = "ACTAGCTACTGTACT";
     introalgo::DNAMatch dnam(pattern, target);
     for (int i : dnam.match()) std::cout << i << " ";

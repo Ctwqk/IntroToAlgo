@@ -7,9 +7,12 @@
 
 namespace introalgo {
 
-Heap::Heap(int cap) { heap.reserve(static_cast<std::size_t>(std::max(cap, 0))); }
+Heap::Heap(int cap) {
+    heap.reserve(static_cast<std::size_t>(std::max(cap, 0)));
+}
 
-Heap::Heap(const std::vector<int>& input, int cap) : Heap(std::max(cap, static_cast<int>(input.size()))) {
+Heap::Heap(const std::vector<int>& input, int cap)
+    : Heap(std::max(cap, static_cast<int>(input.size()))) {
     for (int i : input) heap.push_back(i);
     buildHeap();
 }

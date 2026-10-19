@@ -144,8 +144,10 @@ TEST(Simplex, Infeasible) {
 }
 
 TEST(Simplex, Unbounded) {
-    EXPECT_EQ(Simplex({{-1, 1}}, {1}, {1, 0}).solve().status, LpStatus::Unbounded);  // x grows with y
-    EXPECT_EQ(Simplex({}, {}, {1, 1}).solve().status, LpStatus::Unbounded);          // no constraints at all
+    EXPECT_EQ(Simplex({{-1, 1}}, {1}, {1, 0}).solve().status,
+              LpStatus::Unbounded);  // x grows with y
+    EXPECT_EQ(Simplex({}, {}, {1, 1}).solve().status,
+              LpStatus::Unbounded);  // no constraints at all
     // Unbounded *after* phase one:
     EXPECT_EQ(Simplex({{-1, -1}}, {-1}, {1, 1}).solve().status, LpStatus::Unbounded);
 }
@@ -154,7 +156,8 @@ TEST(Simplex, TrivialAndDegenerateShapes) {
     const LpResult zero = Simplex({}, {}, {}).solve();
     EXPECT_EQ(zero.status, LpStatus::Optimal);
     EXPECT_EQ(zero.objective, 0);
-    const LpResult origin = Simplex({{1, 1}}, {10}, {-1, -2}).solve();  // maximizing a negative objective
+    const LpResult origin =
+        Simplex({{1, 1}}, {10}, {-1, -2}).solve();  // maximizing a negative objective
     ASSERT_EQ(origin.status, LpStatus::Optimal);
     EXPECT_NEAR(origin.objective, 0, 1e-12);
     EXPECT_THROW(Simplex({{1, 2}}, {1, 2}, {1, 2}), std::invalid_argument);
@@ -164,7 +167,8 @@ TEST(Simplex, TrivialAndDegenerateShapes) {
 TEST(Simplex, BealesCyclingExampleTerminates) {
     // Beale's example makes the largest-coefficient rule cycle forever; Bland's rule terminates.
     // maximize 3/4 x1 - 20 x2 + 1/2 x3 - 6 x4  (optimum 5/4 at x1 = 1, x3 = 1)
-    Simplex lp({{0.25, -8, -1, 9}, {0.5, -12, -0.5, 3}, {0, 0, 1, 0}}, {0, 0, 1}, {0.75, -20, 0.5, -6});
+    Simplex lp({{0.25, -8, -1, 9}, {0.5, -12, -0.5, 3}, {0, 0, 1, 0}}, {0, 0, 1},
+               {0.75, -20, 0.5, -6});
     const LpResult r = lp.solve();
     ASSERT_EQ(r.status, LpStatus::Optimal);
     EXPECT_NEAR(r.objective, 1.25, 1e-9);
@@ -180,9 +184,11 @@ TEST(Simplex, RandomizedMatchesVertexEnumeration) {
         Vec b(static_cast<std::size_t>(m)), c(static_cast<std::size_t>(n));
         for (auto& row : A)
             for (auto& x : row) x = testutil::randInt(rng, -4, 6);
-        for (auto& x : b) x = testutil::randInt(rng, -6, 20);  // negative values make some LPs infeasible
+        for (auto& x : b)
+            x = testutil::randInt(rng, -6, 20);  // negative values make some LPs infeasible
         for (auto& x : c) x = testutil::randInt(rng, -5, 8);
-        A.push_back(Vec(static_cast<std::size_t>(n), 1.0));  // box: sum x <= 15 keeps the problem bounded
+        A.push_back(
+            Vec(static_cast<std::size_t>(n), 1.0));  // box: sum x <= 15 keeps the problem bounded
         b.push_back(15);
 
         const Oracle expected = bruteForce(A, b, c);
@@ -198,7 +204,7 @@ TEST(Simplex, RandomizedMatchesVertexEnumeration) {
         EXPECT_NEAR(dot(c, got.x), got.objective, 1e-6);
         ++optimal;
     }
-    EXPECT_GT(optimal, 300);     // the generator really exercises both outcomes
+    EXPECT_GT(optimal, 300);  // the generator really exercises both outcomes
     EXPECT_GT(infeasible, 100);
 }
 

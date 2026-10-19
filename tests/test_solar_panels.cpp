@@ -14,7 +14,8 @@ namespace {
 
 // Exhaustive oracle: give every house either no package or one of the packages, recursively, and
 // keep the best count over all assignments that respect the per-package usage limits.
-int bruteForce(const std::vector<int>& panels, std::vector<int> uses, const std::vector<int>& need, std::size_t house = 0) {
+int bruteForce(const std::vector<int>& panels, std::vector<int> uses, const std::vector<int>& need,
+               std::size_t house = 0) {
     if (house == need.size()) return 0;
     int best = bruteForce(panels, uses, need, house + 1);  // leave this house without panels
     for (std::size_t p = 0; p < panels.size(); ++p) {
@@ -28,7 +29,8 @@ int bruteForce(const std::vector<int>& panels, std::vector<int> uses, const std:
 }
 
 // Independent oracle: bipartite flow  source -> house (1) -> suitable package -> sink (uses).
-int flowOracle(const std::vector<int>& panels, const std::vector<int>& uses, const std::vector<int>& need) {
+int flowOracle(const std::vector<int>& panels, const std::vector<int>& uses,
+               const std::vector<int>& need) {
     const int m = int(need.size()), n = int(panels.size());
     FlowGraph g(m + n + 2);
     const int s = m + n, t = s + 1;
@@ -49,7 +51,8 @@ TEST(SolarPanels, SmallHandCheckedCases) {
     EXPECT_EQ(MaximumNumHousesSolar({10, 5}, {2, 1}, {11}).maxNumHouses(), 0);
     EXPECT_EQ(MaximumNumHousesSolar({}, {}, {1, 2}).maxNumHouses(), 0);
     EXPECT_EQ(MaximumNumHousesSolar({5}, {3}, {}).maxNumHouses(), 0);
-    EXPECT_EQ(MaximumNumHousesSolar({5}, {0}, {1}).maxNumHouses(), 0);  // a package that cannot be used
+    EXPECT_EQ(MaximumNumHousesSolar({5}, {0}, {1}).maxNumHouses(),
+              0);  // a package that cannot be used
     // The small package must go to the small house so that the big one still has a package.
     EXPECT_EQ(MaximumNumHousesSolar({3, 8}, {1, 1}, {8, 2}).maxNumHouses(), 2);
 }
@@ -78,6 +81,7 @@ TEST(SolarPanels, LargerRandomInstancesAgainstFlow) {
         auto panels = testutil::randVector(rng, std::size_t(n), 1, 50);
         auto uses = testutil::randVector(rng, std::size_t(n), 0, 5);
         auto need = testutil::randVector(rng, std::size_t(m), 1, 50);
-        EXPECT_EQ(MaximumNumHousesSolar(panels, uses, need).maxNumHouses(), flowOracle(panels, uses, need));
+        EXPECT_EQ(MaximumNumHousesSolar(panels, uses, need).maxNumHouses(),
+                  flowOracle(panels, uses, need));
     }
 }

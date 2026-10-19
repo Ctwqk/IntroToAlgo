@@ -103,7 +103,9 @@ void Sort::quick_sort(int a, int b, Partition scheme) {
     }
 }
 
-void Sort::quick_sort(Partition scheme) { quick_sort(0, size() - 1, scheme); }
+void Sort::quick_sort(Partition scheme) {
+    quick_sort(0, size() - 1, scheme);
+}
 
 void Sort::counting_sort() {
     if (arr.empty()) return;
@@ -129,7 +131,8 @@ void Sort::counting_sort() {
     arr = std::move(brr);
 }
 
-void Sort::aux_counting_radix(std::vector<DigitKey>& ds, int digi) const {  // sorting based on the digit-th digit value
+void Sort::aux_counting_radix(std::vector<DigitKey>& ds,
+                              int digi) const {  // sorting based on the digit-th digit value
     const int n = static_cast<int>(ds.size());
     if (n == 0) return;
     int min = ds[0].key.at(static_cast<std::size_t>(digi)), max = min;
@@ -154,7 +157,8 @@ void Sort::aux_counting_radix(std::vector<DigitKey>& ds, int digi) const {  // s
 void Sort::radix_sort(std::vector<DigitKey>& t, int digit) const {
     if (!t.size()) return;
     for (const auto& d : t)
-        if (d.digits() < digit) throw std::invalid_argument("Sort::radix_sort: record with too few digits");
+        if (d.digits() < digit)
+            throw std::invalid_argument("Sort::radix_sort: record with too few digits");
     for (int i = digit - 1; i >= 0; i--) {
         aux_counting_radix(t, i);
     }

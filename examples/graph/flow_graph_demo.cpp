@@ -19,5 +19,7 @@ int main() {
     g.addEdge("v4", "t", 4);
     std::cout << "max flow s -> t: " << g.maxFlow("s", "t") << std::endl;
     for (const auto& e : g.underlying().edges())
-        if (e.flow > 0) std::cout << "  " << g.label(e.from) << " -> " << g.label(e.to) << ": " << e.flow << "/" << e.capacity << std::endl;
+        if (e.flow > 0)
+            std::cout << "  " << g.label(e.from) << " -> " << g.label(e.to) << ": " << e.flow << "/"
+                      << e.capacity << std::endl;
 }

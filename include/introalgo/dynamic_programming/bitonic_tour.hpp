@@ -37,11 +37,11 @@ public:
 
 private:
     int size;
-    std::vector<Point> pts;       // sorted by x
-    std::vector<int> original;    // original[k]: index of sorted point k in the input
-    std::vector<std::vector<double>> cop;     // cop[i][j]: Euclidean distance
-    std::vector<std::vector<double>> dptab;   // dptab[i][j] (i < j): b[i][j]
-    std::vector<std::vector<int>> prevk;      // prevk[i][j]: predecessor of j in the optimal b[i][j]
+    std::vector<Point> pts;                  // sorted by x
+    std::vector<int> original;               // original[k]: index of sorted point k in the input
+    std::vector<std::vector<double>> cop;    // cop[i][j]: Euclidean distance
+    std::vector<std::vector<double>> dptab;  // dptab[i][j] (i < j): b[i][j]
+    std::vector<std::vector<int>> prevk;     // prevk[i][j]: predecessor of j in the optimal b[i][j]
     double best = 0.0;
     std::vector<int> order;
 };

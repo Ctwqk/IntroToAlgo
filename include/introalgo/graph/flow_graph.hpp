@@ -57,8 +57,8 @@ private:
         long long cap;   // original capacity (0 for the reverse arc of an edge)
         long long flow;  // flow on the arc; the reverse arc carries the negated value
     };
-    std::vector<Arc> arcs;                 // arc 2i is the edge, arc 2i+1 its reverse
-    std::vector<std::vector<int>> adj;     // arc indices leaving each vertex
+    std::vector<Arc> arcs;              // arc 2i is the edge, arc 2i+1 its reverse
+    std::vector<std::vector<int>> adj;  // arc indices leaving each vertex
     int source = -1;
 
     bool valid(int x) const { return x >= 0 && x < vertices(); }

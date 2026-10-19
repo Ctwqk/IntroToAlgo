@@ -7,9 +7,11 @@
 
 namespace introalgo {
 
-LUP::LUP(Matrix mat) : n(static_cast<int>(mat.size())), A(std::move(mat)), P(static_cast<std::size_t>(n)) {
+LUP::LUP(Matrix mat)
+    : n(static_cast<int>(mat.size())), A(std::move(mat)), P(static_cast<std::size_t>(n)) {
     for (const auto& row : A)
-        if (static_cast<int>(row.size()) != n) throw std::invalid_argument("LUP: matrix must be square");
+        if (static_cast<int>(row.size()) != n)
+            throw std::invalid_argument("LUP: matrix must be square");
     double scale = 0;
     for (const auto& row : A)
         for (double x : row) scale = std::fmax(scale, std::fabs(x));
@@ -49,12 +51,13 @@ Matrix LUP::U() const {
 }
 
 std::vector<double> LUP::solve(const std::vector<double>& rhs) const {
-    if (static_cast<int>(rhs.size()) != n) throw std::invalid_argument("LUP::solve: wrong right-hand side size");
+    if (static_cast<int>(rhs.size()) != n)
+        throw std::invalid_argument("LUP::solve: wrong right-hand side size");
     std::vector<double> b(static_cast<std::size_t>(n));
     for (int i = 0; i < n; i++) b[i] = rhs[P[i]];  // apply the permutation
     for (int i = 0; i < n; i++)
         for (int j = 0; j < i; j++) b[i] -= A[i][j] * b[j];  // convert b into y (L y = P b)
-    for (int i = n - 1; i >= 0; i--) {                      // convert y into x (U x = y)
+    for (int i = n - 1; i >= 0; i--) {                       // convert y into x (U x = y)
         for (int j = i + 1; j < n; j++) b[i] -= b[j] * A[i][j];
         b[i] /= A[i][i];
     }
@@ -91,7 +94,8 @@ void LUP::show2(std::ostream& os) const {
 Matrix LUP::luNoPivot(Matrix a) {  // LU with space optimization
     const int size = static_cast<int>(a.size());
     for (const auto& row : a)
-        if (static_cast<int>(row.size()) != size) throw std::invalid_argument("LUP: matrix must be square");
+        if (static_cast<int>(row.size()) != size)
+            throw std::invalid_argument("LUP: matrix must be square");
     for (int i = 0; i < size; i++) {
         if (a[i][i] == 0.0) throw std::runtime_error("LUP::luNoPivot: zero pivot");
         for (int j = i + 1; j < size; j++) {

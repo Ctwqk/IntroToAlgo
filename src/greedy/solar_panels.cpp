@@ -8,13 +8,15 @@
 
 namespace introalgo {
 
-MaximumNumHousesSolar::MaximumNumHousesSolar(std::vector<int> solarPanel, std::vector<int> packageTime,
+MaximumNumHousesSolar::MaximumNumHousesSolar(std::vector<int> solarPanel,
+                                             std::vector<int> packageTime,
                                              std::vector<int> houseMin)
     : numOfSolarPanels(std::move(solarPanel)),
       timeOfPackageCanBeUsed(std::move(packageTime)),
       minimumHouseNeeded(std::move(houseMin)) {
     if (numOfSolarPanels.size() != timeOfPackageCanBeUsed.size())
-        throw std::invalid_argument("MaximumNumHousesSolar: one usage count per package is required");
+        throw std::invalid_argument(
+            "MaximumNumHousesSolar: one usage count per package is required");
 }
 
 int MaximumNumHousesSolar::maxNumHouses() const {

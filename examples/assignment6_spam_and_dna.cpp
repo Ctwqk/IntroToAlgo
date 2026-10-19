@@ -13,8 +13,8 @@ using introalgo::DNAMatch;
 using introalgo::Trie;
 
 void detectSpam() {
-    vector<string> K{"asda",     "aebrq", "bqrqwf",  "VASVE",   "vasdawdf", "dasegawggdav",
-                     "efwd",     "asd",   "davcase", "vwdfd",   "davsef"};
+    vector<string> K{"asda", "aebrq", "bqrqwf",  "VASVE", "vasdawdf", "dasegawggdav",
+                     "efwd", "asd",   "davcase", "vwdfd", "davsef"};
     string message = "I am asda, u r asd, please bqrqwf to VASVE, so that u efwd a dasegawggdav";
     vector<string> wordInMessage;
     while (true) {
@@ -24,7 +24,8 @@ void detectSpam() {
         message = message.substr(pos + 1, message.size() - pos);
         string s = wordInMessage.back();
         char c = s.back();
-        if (c < 65 || (c > 90 && c < 97) || c > 122) wordInMessage.back() = s.substr(0, s.size() - 1);
+        if (c < 65 || (c > 90 && c < 97) || c > 122)
+            wordInMessage.back() = s.substr(0, s.size() - 1);
     }
     wordInMessage.push_back(message);
 
@@ -43,7 +44,8 @@ void detectSpam() {
 
 void testDNAMatch() {
     string target =
-        "TATTACTAGCTACTGTACTCGGCAGCCTATTCACTAGCTACTGTACTGGAGTACTATTCGGTGCGTATTCGACTAGCTACTGTACTGATAACGTACGT";
+        "TATTACTAGCTACTGTACTCGGCAGCCTATTCACTAGCTACTGTACTGGAGTACTATTCGGTGCGTATTCGACTAGCTACTGTACTGATA"
+        "ACGTACGT";
     string pattern = "ACTAGCTACTGTACT";
     DNAMatch dnam(pattern, target);
     cout << "target: " << target << endl;

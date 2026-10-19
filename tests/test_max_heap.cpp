@@ -13,8 +13,8 @@ using introalgo::Heap;
 using introalgo::HeapEntry;
 
 TEST(MaxHeap, OriginalDemoValues) {
-    std::vector<int> values{10, 33,   44,  1323, 42,  99,  0,   1,   4,   29, 34,
-                            63546, 478, 4452, 464, 245, 243, 345, 2345, 4, 5};
+    std::vector<int> values{10,    33,  44,   1323, 42,  99,  0,   1,    4, 29, 34,
+                            63546, 478, 4452, 464,  245, 243, 345, 2345, 4, 5};
     Heap h;
     for (int v : values) {
         h.insert(HeapEntry(v));
@@ -88,7 +88,8 @@ TEST(MaxHeap, GrowsBeyondTheInitialCapacity) {
 TEST(MaxHeap, ConstructFromVectorBuildsAHeap) {
     testutil::Rng rng(22);
     for (int iter = 0; iter < 100; ++iter) {
-        auto values = testutil::randVector(rng, std::size_t(testutil::randInt(rng, 0, 200)), -50, 50);
+        auto values =
+            testutil::randVector(rng, std::size_t(testutil::randInt(rng, 0, 200)), -50, 50);
         Heap h(values);
         EXPECT_TRUE(h.isMaxHeap());
         EXPECT_EQ(h.size(), int(values.size()));
@@ -105,7 +106,7 @@ TEST(MaxHeap, HeapifyByEntry) {
     EXPECT_TRUE(h.heapify(HeapEntry(3)));
     EXPECT_FALSE(h.heapify(HeapEntry(99)));
     EXPECT_TRUE(h.isMaxHeap());
-    h.heapify(-1);   // out of range positions are ignored
+    h.heapify(-1);  // out of range positions are ignored
     h.heapify(100);
     EXPECT_TRUE(h.isMaxHeap());
 }

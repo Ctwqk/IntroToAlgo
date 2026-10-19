@@ -61,8 +61,16 @@ void expectValidFlow(const FlowGraph& g, int s, int t, long long value) {
 
 TEST(FlowGraph, TextbookNetwork) {
     // CLRS figure 26.1: s = 0, t = 5, maximum flow 23.
-    FlowGraph g = build(6, {{0, 1, 16}, {0, 2, 13}, {1, 2, 10}, {2, 1, 4}, {1, 3, 12}, {3, 2, 9},
-                            {2, 4, 14}, {4, 3, 7}, {3, 5, 20}, {4, 5, 4}});
+    FlowGraph g = build(6, {{0, 1, 16},
+                            {0, 2, 13},
+                            {1, 2, 10},
+                            {2, 1, 4},
+                            {1, 3, 12},
+                            {3, 2, 9},
+                            {2, 4, 14},
+                            {4, 3, 7},
+                            {3, 5, 20},
+                            {4, 5, 4}});
     EXPECT_EQ(g.maxFlow(0, 5), 23);
     expectValidFlow(g, 0, 5, 23);
     EXPECT_EQ(g.maxFlow(0, 5), 23) << "calling it again discards the old flow";
@@ -103,8 +111,16 @@ TEST(FlowGraph, InvalidInput) {
 }
 
 TEST(FlowGraph, MinCutSourceSideCapacityEqualsTheFlow) {
-    FlowGraph g = build(6, {{0, 1, 16}, {0, 2, 13}, {1, 2, 10}, {2, 1, 4}, {1, 3, 12}, {3, 2, 9},
-                            {2, 4, 14}, {4, 3, 7}, {3, 5, 20}, {4, 5, 4}});
+    FlowGraph g = build(6, {{0, 1, 16},
+                            {0, 2, 13},
+                            {1, 2, 10},
+                            {2, 1, 4},
+                            {1, 3, 12},
+                            {3, 2, 9},
+                            {2, 4, 14},
+                            {4, 3, 7},
+                            {3, 5, 20},
+                            {4, 5, 4}});
     const long long value = g.maxFlow(0, 5);
     const auto side = g.minCutSourceSide();
     EXPECT_TRUE(side[0]);

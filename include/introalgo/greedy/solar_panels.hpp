@@ -19,7 +19,8 @@ namespace introalgo {
 class MaximumNumHousesSolar {
 public:
     /// `solarPanel` and `packageTime` have one entry per package (std::invalid_argument otherwise).
-    MaximumNumHousesSolar(std::vector<int> solarPanel, std::vector<int> packageTime, std::vector<int> houseMin);
+    MaximumNumHousesSolar(std::vector<int> solarPanel, std::vector<int> packageTime,
+                          std::vector<int> houseMin);
 
     /// The largest number of houses that can be served (called mac_num_house in the original).
     int maxNumHouses() const;

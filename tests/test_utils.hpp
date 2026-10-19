@@ -28,7 +28,8 @@ inline std::vector<int> randVector(Rng& rng, std::size_t n, int lo, int hi) {
 
 inline std::string randString(Rng& rng, std::size_t n, const std::string& alphabet) {
     std::string s(n, ' ');
-    for (auto& c : s) c = alphabet[static_cast<std::size_t>(randInt(rng, 0, int(alphabet.size()) - 1))];
+    for (auto& c : s)
+        c = alphabet[static_cast<std::size_t>(randInt(rng, 0, int(alphabet.size()) - 1))];
     return s;
 }
 

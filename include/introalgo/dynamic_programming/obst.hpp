@@ -34,7 +34,8 @@ public:
 
     /// Depth of every key in the optimal tree (root = 0), indexed by k1..kn -> [0, n).
     std::vector<int> keyDepths() const;
-    /// Depth of every dummy key d0..dn in the optimal tree (a leaf directly below the root has depth 1).
+    /// Depth of every dummy key d0..dn in the optimal tree (a leaf directly below the root has
+    /// depth 1).
     std::vector<int> dummyDepths() const;
 
     /// Prints the optimal tree level by level in the same wording as the original program.

@@ -19,8 +19,11 @@ struct SlackForm {
     std::vector<double> b, c;
     double v = 0.0;
 
-    SlackForm(int vars) : a(static_cast<std::size_t>(vars), std::vector<double>(static_cast<std::size_t>(vars), 0.0)),
-                          b(static_cast<std::size_t>(vars), 0.0), c(static_cast<std::size_t>(vars), 0.0) {}
+    SlackForm(int vars)
+        : a(static_cast<std::size_t>(vars),
+            std::vector<double>(static_cast<std::size_t>(vars), 0.0)),
+          b(static_cast<std::size_t>(vars), 0.0),
+          c(static_cast<std::size_t>(vars), 0.0) {}
 
     // Exchange the basic variable l with the nonbasic variable e.
     void pivot(int l, int e) {
@@ -42,7 +45,8 @@ struct SlackForm {
         for (int j : N)
             if (j != e) nc[j] = c[j] - c[e] * na[e][j];
         nc[l] = -c[e] * na[e][l];
-        // The old row l and column e no longer mean anything; clear them so stale numbers cannot leak.
+        // The old row l and column e no longer mean anything; clear them so stale numbers cannot
+        // leak.
         for (std::size_t k = 0; k < nn; k++) {
             na[l][k] = 0.0;
             na[k][e] = 0.0;
@@ -87,10 +91,16 @@ struct SlackForm {
 }  // namespace
 
 Simplex::Simplex(std::vector<std::vector<double>> a, std::vector<double> bb, std::vector<double> cc)
-    : m(static_cast<int>(a.size())), n(static_cast<int>(cc.size())), A(std::move(a)), b(std::move(bb)), c(std::move(cc)) {
-    if (static_cast<int>(b.size()) != m) throw std::invalid_argument("Simplex: b must have one entry per row of A");
+    : m(static_cast<int>(a.size())),
+      n(static_cast<int>(cc.size())),
+      A(std::move(a)),
+      b(std::move(bb)),
+      c(std::move(cc)) {
+    if (static_cast<int>(b.size()) != m)
+        throw std::invalid_argument("Simplex: b must have one entry per row of A");
     for (const auto& row : A)
-        if (static_cast<int>(row.size()) != n) throw std::invalid_argument("Simplex: every row of A needs n entries");
+        if (static_cast<int>(row.size()) != n)
+            throw std::invalid_argument("Simplex: every row of A needs n entries");
 }
 
 LpResult Simplex::solve() const {

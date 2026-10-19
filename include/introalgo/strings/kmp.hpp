@@ -22,7 +22,7 @@ private:
     std::string target;
     std::string pattern;
     std::vector<int> lps_;
-    int n, m;  // pattern / target length
+    int n, m;       // pattern / target length
     void getLPS();  // calculates the prefix lengths
 };
 

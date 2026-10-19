@@ -46,8 +46,8 @@ TEST(VanEmdeBoas, SmallExample) {
     EXPECT_TRUE(v.empty());
     EXPECT_EQ(v.minimum(), -1);
     for (int x : {2, 3, 4, 5, 7, 14, 15}) EXPECT_TRUE(v.insert(x));
-    EXPECT_FALSE(v.insert(7));    // already there
-    EXPECT_FALSE(v.insert(16));   // outside the universe
+    EXPECT_FALSE(v.insert(7));   // already there
+    EXPECT_FALSE(v.insert(16));  // outside the universe
     EXPECT_FALSE(v.insert(-1));
     EXPECT_EQ(v.minimum(), 2);
     EXPECT_EQ(v.maximum(), 15);

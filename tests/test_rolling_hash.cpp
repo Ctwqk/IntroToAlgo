@@ -22,7 +22,8 @@ std::vector<int> naive(const std::string& text, const std::string& pattern) {
 
 TEST(DnaMatch, KnownAnswerFromOriginalDemo) {
     const std::string target =
-        "TATTACTAGCTACTGTACTCGGCAGCCTATTCACTAGCTACTGTACTGGAGTACTATTCGGTGCGTATTCGACTAGCTACTGTACTGATAACGTACGT";
+        "TATTACTAGCTACTGTACTCGGCAGCCTATTCACTAGCTACTGTACTGGAGTACTATTCGGTGCGTATTCGACTAGCTACTGTACTGATA"
+        "ACGTACGT";
     DNAMatch d("ACTAGCTACTGTACT", target);
     EXPECT_EQ(d.match(), (std::vector<int>{4, 32, 71}));
 }
@@ -74,8 +75,10 @@ TEST(DnaMatch, HashCollisionsDoNotProduceFalseMatches) {
     testutil::Rng rng(14);
     for (long long mod : {2LL, 3LL, 5LL, 7LL, 13LL}) {
         for (int iter = 0; iter < 300; ++iter) {
-            auto text = testutil::randString(rng, std::size_t(testutil::randInt(rng, 0, 50)), "ACGT");
-            auto pattern = testutil::randString(rng, std::size_t(testutil::randInt(rng, 1, 7)), "ACGT");
+            auto text =
+                testutil::randString(rng, std::size_t(testutil::randInt(rng, 0, 50)), "ACGT");
+            auto pattern =
+                testutil::randString(rng, std::size_t(testutil::randInt(rng, 1, 7)), "ACGT");
             EXPECT_EQ(DNAMatch(pattern, text, mod).match(), naive(text, pattern)) << "mod=" << mod;
         }
     }

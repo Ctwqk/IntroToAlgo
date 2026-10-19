@@ -37,7 +37,8 @@ class Sort {
 public:
     enum class Partition {
         Lomuto,  ///< partition_qsa_1: last element is the pivot, single left-to-right scan
-        Hole,    ///< partition_qsa_2: first element is the pivot, two pointers close in from both ends
+        Hole,    ///< partition_qsa_2: first element is the pivot, two pointers close in from both
+                 ///< ends
     };
 
     Sort() = default;

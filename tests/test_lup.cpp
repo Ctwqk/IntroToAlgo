@@ -72,7 +72,8 @@ TEST(Lup, SolveEquationFromOriginalDemo) {
 TEST(Lup, DecompositionOfTheOriginalTestMatrix) {
     const Matrix a{{2, 0, 2, 0.6}, {3, 3, 4, -2}, {5, 5, 4, 2}, {-1, -2, 3.4, -1}};
     LUP lup(a);
-    EXPECT_EQ(lup.permutation()[0], 2);  // the largest entry of the first column (5) is pivoted to the top
+    EXPECT_EQ(lup.permutation()[0],
+              2);  // the largest entry of the first column (5) is pivoted to the top
     Matrix pa;
     for (int row : lup.permutation()) pa.push_back(a[std::size_t(row)]);
     EXPECT_LT(maxAbsDiff(multiply(lup.L(), lup.U()), pa), 1e-12);
@@ -142,7 +143,8 @@ TEST(Lup, RandomizedFactorisationSolveDeterminantAndInverse) {
             const double det = cofactorDeterminant(a);
             EXPECT_NEAR(lup.determinant(), det, 1e-7 * std::max(1.0, std::fabs(det)));
         }
-        Matrix identity(static_cast<std::size_t>(n), std::vector<double>(static_cast<std::size_t>(n), 0.0));
+        Matrix identity(static_cast<std::size_t>(n),
+                        std::vector<double>(static_cast<std::size_t>(n), 0.0));
         for (int i = 0; i < n; ++i) identity[i][i] = 1;
         EXPECT_LT(maxAbsDiff(multiply(a, lup.inverse()), identity), 1e-6);
     }
@@ -153,13 +155,18 @@ TEST(Lup, NoPivotFactorisationOnDiagonallyDominantMatrices) {
     for (int iter = 0; iter < 100; ++iter) {
         const int n = testutil::randInt(rng, 1, 6);
         Matrix a = randomMatrix(rng, n, -1, 1);
-        for (int i = 0; i < n; ++i) a[i][i] += 2.0 * n;  // strictly diagonally dominant: no zero pivots
+        for (int i = 0; i < n; ++i)
+            a[i][i] += 2.0 * n;  // strictly diagonally dominant: no zero pivots
         const Matrix packed = LUP::luNoPivot(a);
-        Matrix l(static_cast<std::size_t>(n), std::vector<double>(static_cast<std::size_t>(n), 0.0)), u = l;
+        Matrix l(static_cast<std::size_t>(n),
+                 std::vector<double>(static_cast<std::size_t>(n), 0.0)),
+            u = l;
         for (int i = 0; i < n; ++i)
             for (int j = 0; j < n; ++j) {
-                if (j < i) l[i][j] = packed[i][j];
-                else u[i][j] = packed[i][j];
+                if (j < i)
+                    l[i][j] = packed[i][j];
+                else
+                    u[i][j] = packed[i][j];
                 if (i == j) l[i][j] = 1;
             }
         EXPECT_LT(maxAbsDiff(multiply(l, u), a), 1e-9);

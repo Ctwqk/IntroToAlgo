@@ -35,7 +35,8 @@ std::vector<int> naivePrefixFunction(const std::string& p) {
 
 TEST(Kmp, KnownAnswerFromOriginalDemo) {
     const std::string target =
-        "TATTACTAGCTACTGTACTCGGCAGCCTATTCACTAGCTACTGTACTGGAGTACTATTCGGTGCGTATTCGACTAGCTACTGTACTGATAACGTACGT";
+        "TATTACTAGCTACTGTACTCGGCAGCCTATTCACTAGCTACTGTACTGGAGTACTATTCGGTGCGTATTCGACTAGCTACTGTACTGATA"
+        "ACGTACGT";
     KMP k(target, "ACTAGCTACTGTACT");
     EXPECT_EQ(k.calculateKMP(), (std::vector<int>{4, 32, 71}));
 }
@@ -66,7 +67,8 @@ TEST(Kmp, RandomizedMatchesNaiveSearch) {
         auto text = testutil::randString(rng, std::size_t(testutil::randInt(rng, 0, 30)), "ab");
         auto pattern = testutil::randString(rng, std::size_t(testutil::randInt(rng, 0, 6)), "ab");
         KMP k(text, pattern);
-        EXPECT_EQ(k.calculateKMP(), naive(text, pattern)) << "text=" << text << " pattern=" << pattern;
+        EXPECT_EQ(k.calculateKMP(), naive(text, pattern))
+            << "text=" << text << " pattern=" << pattern;
         EXPECT_EQ(k.lps(), naivePrefixFunction(pattern)) << "pattern=" << pattern;
     }
 }

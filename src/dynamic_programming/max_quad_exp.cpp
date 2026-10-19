@@ -9,7 +9,9 @@ namespace introalgo {
 
 namespace {
 
-bool isOperator(char c) { return c == '+' || c == '-' || c == '*' || c == 'x' || c == '/'; }
+bool isOperator(char c) {
+    return c == '+' || c == '-' || c == '*' || c == 'x' || c == '/';
+}
 
 }  // namespace
 
@@ -30,7 +32,8 @@ Expression::Expression(std::string e) : exp(std::move(e)) {
             tmp = 0;
             digits = 0;
         } else {
-            throw std::invalid_argument(std::string("Expression: unexpected character '") + c + "'");
+            throw std::invalid_argument(std::string("Expression: unexpected character '") + c +
+                                        "'");
         }
     }
     if (digits == 0) throw std::invalid_argument("Expression: empty or ends with an operator");
@@ -52,10 +55,16 @@ namespace {
 // Returns false when the operation is undefined (division by zero).
 bool apply(long long a, long long b, char c, long long& out) {
     switch (c) {
-        case '+': out = a + b; return true;
-        case '-': out = a - b; return true;
+        case '+':
+            out = a + b;
+            return true;
+        case '-':
+            out = a - b;
+            return true;
         case '*':
-        case 'x': out = a * b; return true;
+        case 'x':
+            out = a * b;
+            return true;
         case '/':
             if (b == 0) return false;
             out = a / b;
@@ -76,7 +85,7 @@ void Expression::solve() {
                 // the whole, depending on the operator and on the signs involved: try all four.
                 for (int c = 0; c < 4; c++) {
                     const bool lm = (c & 1) != 0, rm = (c & 2) != 0;
-                    const int la = lm ? j : k, lb = lm ? k : j;      // table cell of the left part
+                    const int la = lm ? j : k, lb = lm ? k : j;  // table cell of the left part
                     const int ra = rm ? k + 1 : r, rb = rm ? r : k + 1;
                     if (!valid[la][lb] || !valid[ra][rb]) continue;
                     long long v;

@@ -44,7 +44,8 @@ TEST(OptimalStopping, FormulaMatchesExhaustiveEnumeration) {
     for (int n = 1; n <= 8; ++n) {
         CalFormula c(n);
         for (int x = 1; x <= n; ++x)
-            EXPECT_NEAR(c.calculate(x), exhaustiveProbability(n, x), 1e-12) << "n=" << n << " x=" << x;
+            EXPECT_NEAR(c.calculate(x), exhaustiveProbability(n, x), 1e-12)
+                << "n=" << n << " x=" << x;
     }
 }
 

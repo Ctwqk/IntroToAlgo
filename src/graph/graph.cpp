@@ -10,14 +10,16 @@
 namespace introalgo {
 
 /*below is the union-find set*/
-UFSet::UFSet(int n) : ufset(static_cast<std::size_t>(n < 0 ? 0 : n)), rank(ufset.size(), 0), sets(size()) {
+UFSet::UFSet(int n)
+    : ufset(static_cast<std::size_t>(n < 0 ? 0 : n)), rank(ufset.size(), 0), sets(size()) {
     for (int i = 0; i < size(); i++) ufset[i] = i;
 }
 
 UFSet::UFSet(const std::vector<int>& arr) : ufset(arr), rank(arr.size(), 0), sets(0) {
     const int n = size();
     for (int i = 0; i < n; i++)
-        if (ufset[i] < 0 || ufset[i] >= n) throw std::invalid_argument("UFSet: parent out of range");
+        if (ufset[i] < 0 || ufset[i] >= n)
+            throw std::invalid_argument("UFSet: parent out of range");
     for (int i = 0; i < n; i++) {
         int x = i, steps = 0;
         while (ufset[x] != x) {
@@ -98,7 +100,8 @@ void Graph::addUndirectedEdge(int u, int v, int weight) {
 void Graph::showAdj(std::ostream& os) const {
     for (int i = 0; i < V; i++) {
         os << i + 1 << "->";
-        for (std::vector<int>::const_iterator j = adj[i].begin(); j != adj[i].end(); j++) os << *j + 1 << "--";
+        for (std::vector<int>::const_iterator j = adj[i].begin(); j != adj[i].end(); j++)
+            os << *j + 1 << "--";
         os << std::endl;
     }
 }
@@ -146,9 +149,13 @@ void Graph::getUFset() {
     }
 }
 
-int Graph::componentCount() { return uf.components(); }
+int Graph::componentCount() {
+    return uf.components();
+}
 
-bool Graph::sameComponent(int u, int v) { return uf.connected(u, v); }
+bool Graph::sameComponent(int u, int v) {
+    return uf.connected(u, v);
+}
 
 std::vector<int> Graph::DFS(int src) const {
     if (src < 0 || src >= V) throw std::out_of_range("Graph::DFS: bad vertex");
@@ -327,8 +334,9 @@ std::vector<std::vector<long long>> Graph::multmat() const {
     for (int i = 0; i < V; i++)
         for (int j = 0; j < V; j++)
             if (mat[i][j] < 0) throw std::domain_error("Graph::multmat: negative weight");
-    std::vector<std::vector<long long>> d(static_cast<std::size_t>(V),
-                                          std::vector<long long>(static_cast<std::size_t>(V), kInfinity));
+    std::vector<std::vector<long long>> d(
+        static_cast<std::size_t>(V),
+        std::vector<long long>(static_cast<std::size_t>(V), kInfinity));
     for (int i = 0; i < V; i++) {
         for (int j = 0; j < V; j++)
             if (mat[i][j]) d[i][j] = mat[i][j];
@@ -342,7 +350,8 @@ std::vector<std::vector<long long>> Graph::multmat() const {
         for (int i = 0; i < V; i++)
             for (int j = 0; j < V; j++)
                 for (int k = 0; k < V; k++)
-                    if (d[i][k] < kInfinity && d[k][j] < kInfinity && d[i][k] + d[k][j] < next[i][j]) {
+                    if (d[i][k] < kInfinity && d[k][j] < kInfinity &&
+                        d[i][k] + d[k][j] < next[i][j]) {
                         next[i][j] = d[i][k] + d[k][j];
                         changed = true;
                     }

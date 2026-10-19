@@ -96,7 +96,8 @@ TEST(RbTree, RandomizedOperationsMatchMultisetAndKeepAllInvariants) {
             ASSERT_EQ(t.size(), oracle.size());
             if (step % 20 == 0) {
                 std::string why;
-                ASSERT_TRUE(t.validate(&why)) << why << " (seed " << seed << ", step " << step << ")";
+                ASSERT_TRUE(t.validate(&why))
+                    << why << " (seed " << seed << ", step " << step << ")";
                 ASSERT_EQ(t.inorder(), std::vector<int>(oracle.begin(), oracle.end()));
             }
         }

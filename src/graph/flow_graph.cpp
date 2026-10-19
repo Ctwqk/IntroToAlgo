@@ -27,7 +27,8 @@ void FlowGraph::reset() {
 }
 
 long long FlowGraph::maxFlow(int s, int t) {
-    if (!valid(s) || !valid(t) || s == t) throw std::invalid_argument("FlowGraph::maxFlow: bad source/sink");
+    if (!valid(s) || !valid(t) || s == t)
+        throw std::invalid_argument("FlowGraph::maxFlow: bad source/sink");
     reset();
     source = s;
     long long total = 0;

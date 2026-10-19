@@ -11,8 +11,8 @@ using Mat3 = std::array<std::array<double, 3>, 3>;
 
 constexpr double kPi = 3.14159265358979323846;
 
-/// Rotation about the coordinate axis `axis` (0 = x, 1 = y, 2 = z) by `angle` radians, counter-clockwise
-/// when looking down the axis towards the origin (the right-handed convention).
+/// Rotation about the coordinate axis `axis` (0 = x, 1 = y, 2 = z) by `angle` radians,
+/// counter-clockwise when looking down the axis towards the origin (the right-handed convention).
 Mat3 axisRotation(int axis, double angle);
 Mat3 multiply(const Mat3& a, const Mat3& b);
 Vec3 rotateVec(const Mat3& m, const Vec3& v);
@@ -26,13 +26,14 @@ Vec3 rotateVec(const Mat3& m, const Vec3& v);
 ///
 /// Changes relative to the original: pi was an `int` (3) in the degree conversion, degrees were
 /// reduced modulo 180 instead of 360, points were multiplied as row vectors (which rotates by the
-/// inverse angle), and show() wrote through an uninitialised canvas and outside it after a rotation.
+/// inverse angle), and show() wrote through an uninitialised canvas and outside it after a
+/// rotation.
 class Cube {
 public:
     explicit Cube(int s);
 
-    void getRotateMat(double alpha, double beta, double theta);          // radians
-    void getRotateMatd(double alphaD, double betaD, double thetaD);      // degrees
+    void getRotateMat(double alpha, double beta, double theta);      // radians
+    void getRotateMatd(double alphaD, double betaD, double thetaD);  // degrees
     const Mat3& rotationMatrix() const { return rotMat; }
 
     /// Rotates every point by the current rotation matrix (cumulative over repeated calls).

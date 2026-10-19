@@ -18,7 +18,8 @@ Obst::Obst(const std::vector<double>& a, const std::vector<double>& b)
         q[i] = b[i];
     }
     q[0] = b[0];
-    root.assign(static_cast<std::size_t>(size), std::vector<int>(static_cast<std::size_t>(size), 0));
+    root.assign(static_cast<std::size_t>(size),
+                std::vector<int>(static_cast<std::size_t>(size), 0));
     e.assign(static_cast<std::size_t>(size) + 1,
              std::vector<double>(static_cast<std::size_t>(size) + 1, 0.0));
     w = e;
@@ -45,7 +46,9 @@ void Obst::find_obst2() {
     }
 }
 
-double Obst::expectedCost() const { return e[1][size - 1]; }
+double Obst::expectedCost() const {
+    return e[1][size - 1];
+}
 
 int Obst::rootOf(int i, int j) const {
     if (i < 1 || j < i || j > size - 1) throw std::out_of_range("Obst::rootOf");
@@ -65,13 +68,15 @@ void Obst::collectDepths(int i, int j, int depth, std::vector<int>& keys,
 }
 
 std::vector<int> Obst::keyDepths() const {
-    std::vector<int> keys(static_cast<std::size_t>(size - 1), 0), dummies(static_cast<std::size_t>(size), 0);
+    std::vector<int> keys(static_cast<std::size_t>(size - 1), 0),
+        dummies(static_cast<std::size_t>(size), 0);
     collectDepths(1, size - 1, 0, keys, dummies);
     return keys;
 }
 
 std::vector<int> Obst::dummyDepths() const {
-    std::vector<int> keys(static_cast<std::size_t>(size - 1), 0), dummies(static_cast<std::size_t>(size), 0);
+    std::vector<int> keys(static_cast<std::size_t>(size - 1), 0),
+        dummies(static_cast<std::size_t>(size), 0);
     collectDepths(1, size - 1, 0, keys, dummies);
     return dummies;
 }

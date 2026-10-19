@@ -50,7 +50,8 @@ TEST(Knapsack, ChosenItemsFitAndAreWorthTheOptimum) {
 
 TEST(Knapsack, ItemThatDoesNotFitDoesNotErasePreviousRow) {
     // In the original an item heavier than the current capacity left a 0 in the table, and the
-    // answer was patched afterwards with a max over rows.  Here that patch returns 20 instead of 30.
+    // answer was patched afterwards with a max over rows.  Here that patch returns 20 instead
+    // of 30.
     Knapsack k({{10, 1}, {100, 50}, {20, 1}}, 3);
     EXPECT_EQ(k.solve(), 30);
 }

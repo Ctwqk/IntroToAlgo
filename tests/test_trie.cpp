@@ -27,7 +27,7 @@ TEST(Trie, InsertSearchDelete) {
     EXPECT_EQ(t.size(), 3u);
     EXPECT_TRUE(t.search("asd"));
     EXPECT_TRUE(t.search("asda"));
-    EXPECT_FALSE(t.search("as"));    // a prefix of a word is not a word
+    EXPECT_FALSE(t.search("as"));  // a prefix of a word is not a word
     EXPECT_FALSE(t.search("asdaa"));
     EXPECT_FALSE(t.search("zzz"));
 
@@ -117,7 +117,8 @@ TEST(Trie, RandomizedOperationsMatchStdSet) {
     std::set<std::string> oracle;
     const std::string alphabet = "abAB";  // tiny alphabet: lots of shared prefixes
     for (int step = 0; step < 6000; ++step) {
-        const std::string w = testutil::randString(rng, std::size_t(testutil::randInt(rng, 0, 5)), alphabet);
+        const std::string w =
+            testutil::randString(rng, std::size_t(testutil::randInt(rng, 0, 5)), alphabet);
         switch (testutil::randInt(rng, 0, 2)) {
             case 0:
                 EXPECT_TRUE(t.insert(w));

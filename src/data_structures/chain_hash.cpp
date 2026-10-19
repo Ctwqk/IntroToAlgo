@@ -10,7 +10,9 @@ ChainHash::ChainHash(int buckets) {
     map.assign(static_cast<std::size_t>(buckets), nullptr);
 }
 
-ChainHash::~ChainHash() { clear(); }
+ChainHash::~ChainHash() {
+    clear();
+}
 
 ChainHash::ChainHash(const ChainHash& other) : map(other.map.size(), nullptr) {
     for (std::size_t i = 0; i < other.map.size(); i++) {
@@ -94,8 +96,10 @@ bool ChainHash::modify(int t, int v) {
 void ChainHash::sortedInsert(int v, const std::string& ord) {
     const bool increasing = ord == "increasing";
     if (!increasing && ord != "decreasing")
-        throw std::invalid_argument("ChainHash::sortedInsert: order must be increasing or decreasing");
-    // Walk past every node that belongs before the new value (equal values stay in insertion order).
+        throw std::invalid_argument(
+            "ChainHash::sortedInsert: order must be increasing or decreasing");
+    // Walk past every node that belongs before the new value (equal values stay in insertion
+    // order).
     ListNode** link = &map[Hash_func(v)];
     while (*link && (increasing ? (*link)->val <= v : (*link)->val >= v)) link = &(*link)->next;
     *link = new ListNode(v, *link);
@@ -104,7 +108,8 @@ void ChainHash::sortedInsert(int v, const std::string& ord) {
 
 std::vector<int> ChainHash::bucket(int index) const {
     std::vector<int> out;
-    for (const ListNode* p = map.at(static_cast<std::size_t>(index)); p; p = p->next) out.push_back(p->val);
+    for (const ListNode* p = map.at(static_cast<std::size_t>(index)); p; p = p->next)
+        out.push_back(p->val);
     return out;
 }
 

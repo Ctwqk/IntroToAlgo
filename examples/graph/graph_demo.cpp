@@ -21,7 +21,8 @@ int main() {
         {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}};
     Graph g(arr);
     g.showMat(std::cout);
-    std::cout << "components: " << g.componentCount() << ", directed: " << (g.isDirected() ? "yes" : "no")
+    std::cout << "components: " << g.componentCount()
+              << ", directed: " << (g.isDirected() ? "yes" : "no")
               << ", has cycle: " << (g.isCycle() ? "yes" : "no") << std::endl;
     std::cout << "BFS from 0:";
     for (int v : g.BFS(0)) std::cout << " " << v;

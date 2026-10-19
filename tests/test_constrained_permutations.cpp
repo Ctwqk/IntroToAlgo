@@ -48,7 +48,8 @@ TEST(ConstrainedPermutations, OriginalDemoHas1764Answers) {
     }
     std::ostringstream out;
     c.show(out);
-    EXPECT_NE(out.str().find("question: 9 number 3 increasing and 3 decreasing;"), std::string::npos);
+    EXPECT_NE(out.str().find("question: 9 number 3 increasing and 3 decreasing;"),
+              std::string::npos);
     EXPECT_NE(out.str().find("number of answers: 1764"), std::string::npos);
 }
 

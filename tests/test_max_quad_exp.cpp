@@ -37,9 +37,15 @@ Parsed parse(const std::string& s) {
 
 bool apply(long long a, long long b, char op, long long& out) {
     switch (op) {
-        case '+': out = a + b; return true;
-        case '-': out = a - b; return true;
-        case '*': out = a * b; return true;
+        case '+':
+            out = a + b;
+            return true;
+        case '-':
+            out = a - b;
+            return true;
+        case '*':
+            out = a * b;
+            return true;
         case '/':
             if (b == 0) return false;
             out = a / b;
@@ -80,7 +86,8 @@ struct Evaluator {
             return v;
         }
         long long n = 0;
-        while (pos < s.size() && std::isdigit(static_cast<unsigned char>(s[pos]))) n = n * 10 + (s[pos++] - '0');
+        while (pos < s.size() && std::isdigit(static_cast<unsigned char>(s[pos])))
+            n = n * 10 + (s[pos++] - '0');
         return n;
     }
 };
@@ -172,6 +179,7 @@ TEST(MaxQuadExp, DivisionNeverExceedsTheTrueMaximum) {
         }
         const long long got = e.calculateMax();
         EXPECT_LE(got, *values.rbegin()) << text;
-        EXPECT_TRUE(values.count(got)) << text << " produced " << got << ", which no parenthesization yields";
+        EXPECT_TRUE(values.count(got))
+            << text << " produced " << got << ", which no parenthesization yields";
     }
 }

@@ -44,8 +44,8 @@ public:
 
 private:
     struct Choice {
-        int split = -1;           // operator index k: (l..k) op (k+1..r)
-        bool leftMax = true;      // use the maximum (true) or minimum of the left part
+        int split = -1;       // operator index k: (l..k) op (k+1..r)
+        bool leftMax = true;  // use the maximum (true) or minimum of the left part
         bool rightMax = true;
     };
 

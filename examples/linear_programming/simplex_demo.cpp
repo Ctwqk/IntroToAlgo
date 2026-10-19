@@ -1,5 +1,6 @@
 // The original SimplexAlgo.cpp was an empty file; this solves the CLRS section 29.3 example:
-//   maximize 3x1 + x2 + 2x3  s.t.  x1 + x2 + 3x3 <= 30,  2x1 + 2x2 + 5x3 <= 24,  4x1 + x2 + 2x3 <= 36.
+//   maximize 3x1 + x2 + 2x3  s.t.  x1 + x2 + 3x3 <= 30,  2x1 + 2x2 + 5x3 <= 24,  4x1 + x2 + 2x3
+//   <= 36.
 #include <iostream>
 
 #include "introalgo/linear_programming/simplex.hpp"

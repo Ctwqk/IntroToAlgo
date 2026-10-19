@@ -21,7 +21,8 @@ private:
     int size;
     int capacity;  // weight capacity
     std::vector<std::pair<int, int>> value_weight;
-    std::vector<std::vector<int>> dptab;  // dptab[i][j]: best value using the first i items, capacity j
+    std::vector<std::vector<int>>
+        dptab;  // dptab[i][j]: best value using the first i items, capacity j
 };
 
 }  // namespace introalgo

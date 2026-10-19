@@ -16,11 +16,14 @@ using introalgo::Vec3;
 namespace {
 
 double det(const Mat3& m) {
-    return m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
+    return m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
+           m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
            m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
 }
 
-double norm(const Vec3& v) { return std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]); }
+double norm(const Vec3& v) {
+    return std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+}
 
 void expectNear(const Vec3& a, const Vec3& b, double eps = 1e-9) {
     for (int i = 0; i < 3; ++i) EXPECT_NEAR(a[std::size_t(i)], b[std::size_t(i)], eps);
@@ -44,20 +47,23 @@ TEST(Rotation, MatricesAreProperRotations) {
     testutil::Rng rng(101);
     for (int iter = 0; iter < 200; ++iter) {
         Cube c(2);
-        c.getRotateMat(testutil::randReal(rng, -10, 10), testutil::randReal(rng, -10, 10), testutil::randReal(rng, -10, 10));
+        c.getRotateMat(testutil::randReal(rng, -10, 10), testutil::randReal(rng, -10, 10),
+                       testutil::randReal(rng, -10, 10));
         const Mat3& r = c.rotationMatrix();
         EXPECT_NEAR(det(r), 1.0, 1e-9);
         // R R^T = I
         Mat3 rt{};
         for (int i = 0; i < 3; ++i)
-            for (int j = 0; j < 3; ++j) rt[std::size_t(i)][std::size_t(j)] = r[std::size_t(j)][std::size_t(i)];
+            for (int j = 0; j < 3; ++j)
+                rt[std::size_t(i)][std::size_t(j)] = r[std::size_t(j)][std::size_t(i)];
         expectMatNear(introalgo::multiply(r, rt), introalgo::axisRotation(0, 0.0));
     }
 }
 
 TEST(Rotation, DegreesAndRadiansAgree) {
     // pi was declared `static const int pi = M_PI;` (= 3) in the original, so the degree version
-    // rotated by 3/180 turns per degree.  Angles of 180 degrees or more were also folded modulo 180.
+    // rotated by 3/180 turns per degree.  Angles of 180 degrees or more were also folded modulo
+    // 180.
     Cube a(2), b(2);
     for (double deg : {30.0, 90.0, 179.0, 180.0, 270.0, -45.0, 725.0}) {
         a.getRotateMatd(deg, 0.5 * deg, -deg);
@@ -130,5 +136,6 @@ TEST(Cube, ShowDrawsOneStarPerGridPointForAxisAlignedViews) {
     Cube tilted(9);
     tilted.getRotateMatd(60, 35, 20);
     tilted.rotate();
-    EXPECT_GT(stars(tilted), 0);  // drawing must stay inside the canvas (the original wrote out of bounds)
+    EXPECT_GT(stars(tilted),
+              0);  // drawing must stay inside the canvas (the original wrote out of bounds)
 }

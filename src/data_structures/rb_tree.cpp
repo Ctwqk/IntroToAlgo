@@ -144,7 +144,9 @@ RbTree::Node* RbTree::find(int key) const {
     return x;
 }
 
-bool RbTree::contains(int key) const { return find(key) != nil; }
+bool RbTree::contains(int key) const {
+    return find(key) != nil;
+}
 
 bool RbTree::erase(int key) {
     Node* z = find(key);
@@ -301,8 +303,10 @@ bool RbTree::validate(std::string* why) const {
             if (n->color == Color::Red &&
                 (n->left->color == Color::Red || n->right->color == Color::Red))
                 return fail("red node with a red child");
-            if (n->left != nil && n->left->key > n->key) return fail("left child larger than parent");
-            if (n->right != nil && n->right->key < n->key) return fail("right child smaller than parent");
+            if (n->left != nil && n->left->key > n->key)
+                return fail("left child larger than parent");
+            if (n->right != nil && n->right->key < n->key)
+                return fail("right child smaller than parent");
             f.state = 1;
             const Node* l = n->left;
             const Node* r = n->right;
@@ -320,7 +324,8 @@ bool RbTree::validate(std::string* why) const {
     }
     if (nodes != count) return fail("size does not match the number of nodes");
     const auto order = inorder();
-    if (!std::is_sorted(order.begin(), order.end())) return fail("in-order traversal is not sorted");
+    if (!std::is_sorted(order.begin(), order.end()))
+        return fail("in-order traversal is not sorted");
     return true;
 }
 

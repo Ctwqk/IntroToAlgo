@@ -8,11 +8,13 @@ namespace introalgo {
 
 ConstrainedPermutations::ConstrainedPermutations(int numbers, int increasing, int decreasing)
     : n(numbers), shd1(increasing), shd2(decreasing) {
-    if (n < 0 || n > 12) throw std::invalid_argument("ConstrainedPermutations: n must be in [0, 12]");
+    if (n < 0 || n > 12)
+        throw std::invalid_argument("ConstrainedPermutations: n must be in [0, 12]");
 }
 
 void ConstrainedPermutations::show(std::ostream& os) const {  // output the answer of the question
-    os << "question: " << n << " number " << shd1 << " increasing and " << shd2 << " decreasing;" << std::endl;
+    os << "question: " << n << " number " << shd1 << " increasing and " << shd2 << " decreasing;"
+       << std::endl;
     os << "list of 100 possible answers:" << std::endl;
     for (std::size_t k = 0; k < 100 && k < ans.size(); k++) {
         for (int v : ans[k]) os << v << " ";
@@ -43,7 +45,8 @@ void ConstrainedPermutations::find() {  // find possible lists
                 if (judge(swap.first, layer, swap.second)) {
                     bfs.push(swap);
                     if (bfs.size() > kMaxStates)
-                        throw std::length_error("ConstrainedPermutations: too many partial permutations");
+                        throw std::length_error(
+                            "ConstrainedPermutations: too many partial permutations");
                 }
             }
         }
@@ -54,9 +57,11 @@ void ConstrainedPermutations::find() {  // find possible lists
     }
 }
 
-// Judges whether the current list is still valid.  id[k].first / id[k].second are the lengths of the
-// longest increasing / decreasing subsequence that ends at position k; only id[idx] is computed here.
-bool ConstrainedPermutations::judge(const std::vector<int>& stage, int idx, std::vector<std::pair<int, int>>& id) const {
+// Judges whether the current list is still valid.  id[k].first / id[k].second are the lengths of
+// the longest increasing / decreasing subsequence that ends at position k; only id[idx] is computed
+// here.
+bool ConstrainedPermutations::judge(const std::vector<int>& stage, int idx,
+                                    std::vector<std::pair<int, int>>& id) const {
     for (int i = 0; i < idx; i++) {
         if (stage[i] == stage[idx]) return false;
         if (stage[i] < stage[idx] && id[i].first >= id[idx].first) {

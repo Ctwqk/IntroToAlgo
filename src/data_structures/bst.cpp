@@ -102,7 +102,8 @@ TreeNode* TreeNode::getMax() {
 TreeNode* TreeNode::getPredecessor(TreeNode* node) {
     if (!node) return nullptr;
     if (node->left) return node->left->getMax();
-    // No left subtree: the predecessor is the closest ancestor of which we are in the right subtree.
+    // No left subtree: the predecessor is the closest ancestor of which we are in the right
+    // subtree.
     TreeNode* up = node->p;
     while (up && node == up->left) {
         node = up;
@@ -196,7 +197,9 @@ void Bst::insert(int val) {
     count++;
 }
 
-bool Bst::contains(int val) const { return find(val) != nullptr; }
+bool Bst::contains(int val) const {
+    return find(val) != nullptr;
+}
 
 TreeNode* Bst::detach(TreeNode* node) {
     const bool wasRoot = node == top.get();
@@ -228,7 +231,9 @@ bool Bst::change(int va1, int va2) {
     return true;
 }
 
-std::vector<int> Bst::inorder() const { return top ? top->inorder() : std::vector<int>{}; }
+std::vector<int> Bst::inorder() const {
+    return top ? top->inorder() : std::vector<int>{};
+}
 
 int Bst::height() const {
     int levels = 0;
@@ -255,7 +260,8 @@ bool Bst::isValid() const {
         long long lo, hi;  // lo < value <= hi
     };
     std::stack<Frame> todo;
-    todo.push({top.get(), std::numeric_limits<long long>::min(), std::numeric_limits<long long>::max()});
+    todo.push(
+        {top.get(), std::numeric_limits<long long>::min(), std::numeric_limits<long long>::max()});
     std::size_t seen = 0;
     while (!todo.empty()) {
         const Frame f = todo.top();

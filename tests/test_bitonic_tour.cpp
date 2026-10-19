@@ -15,7 +15,9 @@ using introalgo::Point;
 
 namespace {
 
-double dist(const Point& a, const Point& b) { return std::hypot(a.x - b.x, a.y - b.y); }
+double dist(const Point& a, const Point& b) {
+    return std::hypot(a.x - b.x, a.y - b.y);
+}
 
 double tourLength(const std::vector<Point>& pts, const std::vector<int>& order) {
     double len = 0;

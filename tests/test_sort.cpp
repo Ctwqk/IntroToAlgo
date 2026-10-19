@@ -53,7 +53,8 @@ TEST(Sort, EdgeCases) {
     expectSortsLikeStd({1});
     expectSortsLikeStd({2, 1});
     expectSortsLikeStd({7, 7, 7, 7});
-    expectSortsLikeStd({INT_MAX, INT_MIN, 0, -1, 1}, /*includeCounting=*/false);  // range too wide for it
+    expectSortsLikeStd({INT_MAX, INT_MIN, 0, -1, 1},
+                       /*includeCounting=*/false);  // range too wide for it
 }
 
 TEST(Sort, SortedReversedAndConstantInputs) {
@@ -68,7 +69,8 @@ TEST(Sort, RandomizedAgainstStdSort) {
     testutil::Rng rng(41);
     for (int iter = 0; iter < 300; ++iter) {
         const int range = testutil::randInt(rng, 0, 1) ? 5 : 1000;  // many duplicates / few
-        auto input = testutil::randVector(rng, std::size_t(testutil::randInt(rng, 0, 80)), -range, range);
+        auto input =
+            testutil::randVector(rng, std::size_t(testutil::randInt(rng, 0, 80)), -range, range);
         auto expected = input;
         std::sort(expected.begin(), expected.end());
         for (const auto& [name, run] : algorithms()) {

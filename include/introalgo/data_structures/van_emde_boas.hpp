@@ -41,7 +41,7 @@ public:
 
 private:
     int u;
-    int lowBits;                      // clusters hold 2^lowBits elements
+    int lowBits;  // clusters hold 2^lowBits elements
     int min = -1, max = -1;
     std::unique_ptr<VanEmdeBoas> summary;
     std::vector<std::unique_ptr<VanEmdeBoas>> cluster;

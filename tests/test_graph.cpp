@@ -25,7 +25,8 @@ std::vector<std::vector<int>> originalMatrix() {
 }
 
 // Random graph; `undirected` mirrors every edge.
-Graph randomGraph(testutil::Rng& rng, int n, int edges, bool undirected, int maxWeight = 1, bool selfLoops = false) {
+Graph randomGraph(testutil::Rng& rng, int n, int edges, bool undirected, int maxWeight = 1,
+                  bool selfLoops = false) {
     Graph g(n);
     for (int i = 0; i < edges; ++i) {
         const int u = testutil::randInt(rng, 0, n - 1), v = testutil::randInt(rng, 0, n - 1);
@@ -42,7 +43,8 @@ Graph randomGraph(testutil::Rng& rng, int n, int edges, bool undirected, int max
 // Oracle for reachability: transitive closure by Warshall's algorithm.
 std::vector<std::vector<bool>> closure(const Graph& g) {
     const int n = g.vertices();
-    std::vector<std::vector<bool>> reach(static_cast<std::size_t>(n), std::vector<bool>(static_cast<std::size_t>(n), false));
+    std::vector<std::vector<bool>> reach(static_cast<std::size_t>(n),
+                                         std::vector<bool>(static_cast<std::size_t>(n), false));
     for (int i = 0; i < n; ++i) {
         reach[i][i] = true;
         for (int j = 0; j < n; ++j)
@@ -208,7 +210,8 @@ TEST(Graph, BadInputIsRejected) {
 
 TEST(Graph, TraversalOrders) {
     Graph g(6);
-    for (auto e : std::vector<std::pair<int, int>>{{0, 1}, {0, 2}, {1, 3}, {2, 3}, {3, 4}}) g.addEdge(e.first, e.second);
+    for (auto e : std::vector<std::pair<int, int>>{{0, 1}, {0, 2}, {1, 3}, {2, 3}, {3, 4}})
+        g.addEdge(e.first, e.second);
     EXPECT_EQ(g.BFS(0), (std::vector<int>{0, 1, 2, 3, 4}));
     EXPECT_EQ(g.DFS(0), (std::vector<int>{0, 1, 3, 4, 2}));
     EXPECT_EQ(g.BFS(5), (std::vector<int>{5}));
@@ -218,12 +221,14 @@ TEST(Graph, RandomizedTraversalsVisitExactlyTheReachableVertices) {
     testutil::Rng rng(52);
     for (int iter = 0; iter < 200; ++iter) {
         const int n = testutil::randInt(rng, 1, 12);
-        Graph g = randomGraph(rng, n, testutil::randInt(rng, 0, 20), testutil::randInt(rng, 0, 1) == 1, 1, true);
+        Graph g = randomGraph(rng, n, testutil::randInt(rng, 0, 20),
+                              testutil::randInt(rng, 0, 1) == 1, 1, true);
         const auto reach = closure(g);
         const int src = testutil::randInt(rng, 0, n - 1);
         for (const auto& order : {g.BFS(src), g.DFS(src)}) {
             EXPECT_EQ(order.front(), src);
-            EXPECT_EQ(std::set<int>(order.begin(), order.end()).size(), order.size()) << "no repeats";
+            EXPECT_EQ(std::set<int>(order.begin(), order.end()).size(), order.size())
+                << "no repeats";
             std::set<int> expected;
             for (int v = 0; v < n; ++v)
                 if (reach[src][v]) expected.insert(v);
@@ -288,7 +293,8 @@ TEST(Graph, RandomizedCycleDetectionMatchesOracles) {
 
 TEST(Graph, TopologicalSortOnKnownDag) {
     Graph g(6);  // the classic "get dressed" shape
-    for (auto e : std::vector<std::pair<int, int>>{{5, 2}, {5, 0}, {4, 0}, {4, 1}, {2, 3}, {3, 1}}) g.addEdge(e.first, e.second);
+    for (auto e : std::vector<std::pair<int, int>>{{5, 2}, {5, 0}, {4, 0}, {4, 1}, {2, 3}, {3, 1}})
+        g.addEdge(e.first, e.second);
     ASSERT_TRUE(g.TopoSort().has_value());
     ASSERT_TRUE(g.TopoSortKhan().has_value());
     EXPECT_TRUE(isTopologicalOrder(g, *g.TopoSort()));
@@ -355,7 +361,8 @@ void expectSpanningForest(const Graph& g, const introalgo::SpanningForest& f) {
     }
     EXPECT_EQ(total, f.weight);
     for (int u = 0; u < g.vertices(); ++u)
-        for (int v = 0; v < g.vertices(); ++v) EXPECT_EQ(uf.connected(u, v), copy.sameComponent(u, v));
+        for (int v = 0; v < g.vertices(); ++v)
+            EXPECT_EQ(uf.connected(u, v), copy.sameComponent(u, v));
 }
 
 }  // namespace
@@ -363,8 +370,9 @@ void expectSpanningForest(const Graph& g, const introalgo::SpanningForest& f) {
 TEST(Graph, MinimumSpanningTreeTextbookExample) {
     // CLRS figure 23.1: minimum spanning tree weight 37.
     Graph g(9);
-    const int e[][3] = {{0, 1, 4}, {0, 7, 8}, {1, 2, 8}, {1, 7, 11}, {2, 3, 7}, {2, 8, 2}, {2, 5, 4},
-                        {3, 4, 9}, {3, 5, 14}, {4, 5, 10}, {5, 6, 2}, {6, 7, 1}, {6, 8, 6}, {7, 8, 7}};
+    const int e[][3] = {{0, 1, 4}, {0, 7, 8}, {1, 2, 8}, {1, 7, 11}, {2, 3, 7},
+                        {2, 8, 2}, {2, 5, 4}, {3, 4, 9}, {3, 5, 14}, {4, 5, 10},
+                        {5, 6, 2}, {6, 7, 1}, {6, 8, 6}, {7, 8, 7}};
     for (const auto& x : e) g.addUndirectedEdge(x[0], x[1], x[2]);
     EXPECT_EQ(g.MST_K().weight, 37);
     EXPECT_EQ(g.MST_prim().weight, 37);
@@ -405,7 +413,8 @@ TEST(Graph, RandomizedMstMatchesExhaustiveSearch) {
     }
 }
 
-// ---------------------------------------------------------------- all-pairs shortest paths (multmat)
+// ---------------------------------------------------------------- all-pairs shortest paths
+// (multmat)
 
 TEST(Graph, MultmatOnTheOriginalExampleGivesHopCounts) {
     Graph g(originalMatrix());
@@ -428,8 +437,10 @@ TEST(Graph, RandomizedMultmatMatchesFloydWarshall) {
     const long long inf = Graph::kInfinity;
     for (int iter = 0; iter < 200; ++iter) {
         const int n = testutil::randInt(rng, 1, 9);
-        Graph g = randomGraph(rng, n, testutil::randInt(rng, 0, 25), testutil::randInt(rng, 0, 1) == 1, 9, true);
-        std::vector<std::vector<long long>> fw(static_cast<std::size_t>(n), std::vector<long long>(static_cast<std::size_t>(n), inf));
+        Graph g = randomGraph(rng, n, testutil::randInt(rng, 0, 25),
+                              testutil::randInt(rng, 0, 1) == 1, 9, true);
+        std::vector<std::vector<long long>> fw(
+            static_cast<std::size_t>(n), std::vector<long long>(static_cast<std::size_t>(n), inf));
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j)
                 if (g.matrix()[i][j]) fw[i][j] = g.matrix()[i][j];
@@ -438,7 +449,8 @@ TEST(Graph, RandomizedMultmatMatchesFloydWarshall) {
         for (int k = 0; k < n; ++k)
             for (int i = 0; i < n; ++i)
                 for (int j = 0; j < n; ++j)
-                    if (fw[i][k] < inf && fw[k][j] < inf) fw[i][j] = std::min(fw[i][j], fw[i][k] + fw[k][j]);
+                    if (fw[i][k] < inf && fw[k][j] < inf)
+                        fw[i][j] = std::min(fw[i][j], fw[i][k] + fw[k][j]);
         EXPECT_EQ(g.multmat(), fw);
     }
 }
