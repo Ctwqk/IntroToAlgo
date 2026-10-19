@@ -98,3 +98,25 @@ pair) needed no algorithmic changes.
   inverse angle.
 - `Heap::sizee()` is now `size()`; `precessor` is now `predecessor`; the program-level printing moved to the
   examples.
+
+## Takeover review: boundary and ownership regressions
+
+The existing known-answer and randomized tests were retained. Review added boundary cases that the small random
+inputs did not cover:
+
+| Module | Problem in the first port | Correction and regression |
+|---|---|---|
+| `chain_hash` | A move left zero buckets; querying or inserting into the source divided by zero, and its load factor was NaN. | A move leaves an empty one-bucket table; test transfer, queries, reinsertion, move assignment and self-move. |
+| `trie` | Defaulted moves left a null root and a stale word count; source queries dereferenced null. | Transfer ownership and leave a fresh empty root; test empty-word queries, invariants and reuse after both forms of move. |
+| `van_emde_boas` | Implicit moves retained the old min/max/universe while moving away cluster storage. | Explicit moves leave an empty universe of size 2; test membership, successor, reuse, assignment and self-move. |
+| `knapsack_01` | Two individually valid `int` values could overflow their DP sum (`INT_MAX + 1`). | Widen the addition and throw `std::overflow_error` for an unrepresentable optimum, including zero-weight items. |
+| `rod_cutting` | `INT_MIN` doubled as an unset best-price sentinel, leaving a zero first cut and an endless reconstruction loop; revenue addition also overflowed. | Start with the feasible uncut rod, compare widened revenues, and check the optimal revenue before narrowing. Tests include `INT_MIN` and `INT_MAX`. |
+| `max_quad_exp` | Arithmetic on accepted 15-digit operands could overflow `long long`, despite the input-length guard. | Checked addition, subtraction, multiplication and division; reject an overflowing evaluated intermediate instead of returning a wrapped value. Boundary tests also cover the arithmetic helpers. |
+| `flow_graph` | Parallel capacities, aggregate residuals and maximum-flow totals could overflow `long long`. | Check aggregate sums; a failed solve resets its partial flow so the graph remains reusable. Tests cover parallel and antiparallel edges at `LLONG_MAX`. |
+| `lcs` | The supposedly linear-space length query constructed the quadratic traceback table before running its one-row DP. | Allocate the full table only on `getLCS()`; keep the original length recurrence and sequence tests. |
+
+Build/documentation corrections: require CMake 3.24 (the first version with `DOWNLOAD_EXTRACT_TIMESTAMP`), use
+extraction-time dependency timestamps, fill in the README's space bounds, and correct the optimal-stopping
+threshold search to O(n^2) (it sums probabilities for every threshold). Also correct the vEB claim: lazy child
+nodes still reserve pointer arrays, so storage is O(u) in the worst case and allocation is part of update cost.
+The original executable permission bits on C++ source files were removed; the demo runner remains executable.

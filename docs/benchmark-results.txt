@@ -1,19 +1,19 @@
-# Output of build/benchmarks/scaling (Release, g++ 14.2, 12th Gen Intel(R) Core(TM) i9-12900H; the machine was shared with other jobs, so treat the timings as indicative)
+# Captured 2026-10-19 from a clean checkout at cd7709f: Release, g++ 14.2, Intel i9-12900H. Shared host; timings are indicative.
 algorithm                                  expected                    largest n    time (ms)     fit k  textbook
-LCS length (one-row DP)                    O(n^2)                           8000       235.23      2.31       2.0
-Edit distance                              O(n^2)                           8000       167.88      2.05       2.0
-KMP search (worst-case pattern)            O(n)                          2097152         5.29      1.00       1.0
-Rabin-Karp DNA match                       O(n) expected                 2097152        34.09      1.00       1.0
-Inversion count (merge sort)               O(n log n)                    1048576       104.79      1.13       1.1
-Quick sort (random input)                  O(n log n)                    1048576        82.51      1.09       1.1
-Insertion sort (random input)              O(n^2)                          16000        18.10      1.95       2.0
-Counting sort (values < 1000)              O(n + k)                      2097152         9.61      1.26       1.0
-Heap: n inserts + n pops                   O(n log n)                     524288        55.15      1.04       1.1
-BST: n sorted inserts (degenerate)         O(n^2)                          32000      1334.73      2.24       2.0
-Red-black tree: n sorted inserts           O(n log n)                     524288        45.73      1.27       1.1
-van Emde Boas: n inserts + successor       O(n log log u)                 524288       406.51      0.90       1.0
-Union-find: n random unions                ~O(n)                         2097152        68.92      1.05       1.0
-LUP decomposition (n x n)                  O(n^3)                            400         7.27      2.66       3.0
-All-pairs shortest paths (multmat)         O(V^3 log V)                      160        27.65      2.75       3.0
-Max flow (Edmonds-Karp, sparse random)     O(V E^2) worst case              4000         4.54      2.31         -
-Simplex (n x n dense LP)                   polynomial in practice             80         2.05      2.70         -
+LCS length (one-row DP)                    O(n^2)                           8000        99.79      1.96       2.0
+Edit distance                              O(n^2)                           8000       223.16      2.07       2.0
+KMP search (worst-case pattern)            O(n)                          2097152         4.81      1.00       1.0
+Rabin-Karp DNA match                       O(n) expected                 2097152        38.98      1.00       1.0
+Inversion count (merge sort)               O(n log n)                    1048576       102.93      1.09       1.1
+Quick sort (random input)                  O(n log n)                    1048576        78.48      1.09       1.1
+Insertion sort (random input)              O(n^2)                          16000        30.55      1.98       2.0
+Counting sort (values < 1000)              O(n + k)                      2097152         8.79      1.17       1.0
+Heap: n inserts + n pops                   O(n log n)                     524288        69.44      1.11       1.1
+BST: n sorted inserts (degenerate)         O(n^2)                          32000      1374.14      2.02       2.0
+Red-black tree: n sorted inserts           O(n log n)                     524288        38.19      1.10       1.1
+van Emde Boas: n inserts + successor       O(n log log u)                 524288       444.53      1.02       1.0
+Union-find: n random unions                ~O(n)                         2097152        95.83      1.29       1.0
+LUP decomposition (n x n)                  O(n^3)                            400         7.14      2.70       3.0
+All-pairs shortest paths (multmat)         O(V^3 log V)                      160        30.22      2.92       3.0
+Max flow (Edmonds-Karp, sparse random)     O(V E^2) worst case              4000         5.13      1.98         -
+Simplex (n x n dense LP)                   polynomial in practice             80         2.99      2.76         -
