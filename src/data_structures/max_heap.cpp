@@ -1,138 +1,97 @@
-#include <iostream>
-#include <cmath>
-#include <vector>
+#include "introalgo/data_structures/max_heap.hpp"
 
-using namespace std;
+#include <algorithm>
+#include <ostream>
+#include <stdexcept>
+#include <utility>
 
+namespace introalgo {
 
-struct dat{
-private: 
-    int key;
-    int otherdata;
-public:
-    dat () {}
-    dat(int k):key(k){}
-    int getKey() {
-        return key;
-    }
-    int getOtherdate(){return otherdata;}
-    bool operator==(const dat d){
-        return this->key==d.key;
-    }
-    bool operator<(const dat d){
-        return this->key <d.key;
-    }
-    bool operator>(const dat d){
-        return this->key>d.key;
-    }
-};
-class Heap{
-private:
-    int cap;
-    dat *heap;
-    int size;
-    int search(dat d);
-    void addElement(dat d);
-public:
-    Heap(vector<int> input,int cap=100):cap(cap),size(0){
-        heap = new dat[cap];
-        for(int i:input){
-            *(heap+size++)=i;
-        }
-    }
-    Heap(int cap=100):cap(cap),size(0){
-        heap = new dat[cap];
-    }
-    void heapify(int pos);
-    bool empty();
-    int sizee();
-    void heapify(dat d);
-    void buildHeap();
-    void insert(dat d);
-    void showHeap();
-    dat peek();
-    void pop();
-};
+Heap::Heap(int cap) { heap.reserve(static_cast<std::size_t>(std::max(cap, 0))); }
 
-void Heap::pop(){
-    *heap=*(heap+--size);
+Heap::Heap(const std::vector<int>& input, int cap) : Heap(std::max(cap, static_cast<int>(input.size()))) {
+    for (int i : input) heap.push_back(i);
+    buildHeap();
+}
+
+void Heap::pop() {
+    if (heap.empty()) throw std::out_of_range("Heap::pop: empty heap");
+    heap.front() = heap.back();
+    heap.pop_back();
     heapify(0);
 }
-int Heap::sizee(){return size;}
-bool Heap:: empty(){return size==0;}
-dat Heap::peek(){if(this->empty()) cout<<"empty heap"; 
-    return NULL;
-    return heap[0];
+
+HeapEntry Heap::peek() const {
+    if (heap.empty()) throw std::out_of_range("Heap::peek: empty heap");
+    return heap.front();
 }
-int Heap::search(dat d){
-    for(int i=0;i<size;i++){
-        if(*(heap+i)==d) return i;
+
+int Heap::search(const HeapEntry& d) const {
+    for (int i = 0; i < size(); i++) {
+        if (heap[i] == d) return i;
     }
-    cout<<"no such element in heap";
     return -1;
 }
-void Heap::heapify(dat d){
-    heapify(search(d));
+
+bool Heap::heapify(const HeapEntry& d) {
+    const int pos = search(d);
+    if (pos == -1) return false;
+    heapify(pos);
+    return true;
 }
-void Heap::heapify(int pos){
+
+void Heap::heapify(int pos) {
+    if (pos < 0 || pos >= size()) return;  // out of bound
+    const int n = size();
     int q;
-    dat tmp;
-    if(pos>size) cout<<"out of bound"<<endl;
-    while(2*pos+1<size){
-        if(2*pos+2>=size) q=2*pos+1;
-        else *(heap+2*pos+1)>*(heap+2*pos+2)?q=2*pos+1:q=2*pos+2;
-        if(*(heap+q)>*(heap+pos)){
-            tmp=*(heap+q);
-            *(heap+q)=*(heap+pos);
-            *(heap+pos)=tmp;
-            pos=q;
+    while (2 * pos + 1 < n) {
+        if (2 * pos + 2 >= n)
+            q = 2 * pos + 1;
+        else
+            q = heap[2 * pos + 1] > heap[2 * pos + 2] ? 2 * pos + 1 : 2 * pos + 2;
+        if (heap[q] > heap[pos]) {
+            std::swap(heap[q], heap[pos]);
+            pos = q;
+        } else {
+            break;
         }
-        else break;
     }
 }
-void Heap::buildHeap(){
-    for(int i=size/2-1;i>=0;i--){
+
+void Heap::buildHeap() {
+    for (int i = size() / 2 - 1; i >= 0; i--) {
         heapify(i);
     }
 }
-void Heap::addElement(dat d){
-    /*if(size>=cap){
-        dat* tmp=new dat[cap+cap/10];
-        memcpy(tmp,heap,cap);
-        heap=tmp;
-        delete[] tmp;
-    }*/
-    *(heap+size++)=d;
+
+void Heap::insert(HeapEntry d) {
+    heap.push_back(d);
+    int pos = size() - 1;
+    while (pos) {
+        // The parent of position pos is (pos - 1) / 2.  The original used pos / 2, which is
+        // the parent in a 1-based heap and disagreed with the 0-based children used by heapify.
+        const int parent = (pos - 1) / 2;
+        if (heap[pos] > heap[parent]) {
+            std::swap(heap[pos], heap[parent]);
+            pos = parent;
+        } else {
+            break;
+        }
+    }
 }
 
-void Heap::insert(dat d){
-    addElement(d);
-    int pos=size-1;
-    dat tmp;
-    while(pos){
-        if(*(heap+pos)>*(heap+pos/2)){
-            tmp=*(heap+pos);
-            *(heap+pos)=*(heap+pos/2);
-            *(heap+pos/2)=tmp;
-            pos/=2;
-        }
-        else break;
+void Heap::showHeap(std::ostream& os) const {
+    const int n = size();
+    for (int first = 0, width = 1; first < n; first += width, width *= 2) {
+        for (int k = 0; k < width && first + k < n; k++) os << heap[first + k].getKey() << " ";
+        os << std::endl;
     }
 }
-void Heap::showHeap(){
-    int index=0;
-    for(int i=0;i<=floor(log2(size));i++){
-        index=pow(2,i)-1;
-        for(int k=0;k<pow(2,i)&&index+k<size;k++){
-            cout<<(heap+index+k)->getKey()<<" ";
-        }
-        cout<<endl;
-    }
+
+bool Heap::isMaxHeap() const {
+    for (int i = 1; i < size(); i++)
+        if (heap[(i - 1) / 2] < heap[i]) return false;
+    return true;
 }
-int main(){
-    vector<int> values{10,33,44,1323,42,99,0,1,4,29,34,63546,478,4452,464,245,243,345,2345,4,5};
-    Heap *h=new Heap();
-    for(int i:values) h->insert(dat(i));
-    //h->pop();
-    h->showHeap();
-}
+
+}  // namespace introalgo

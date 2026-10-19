@@ -57,6 +57,12 @@ set(INTROALGO_SOURCES
   src/dynamic_programming/max_quad_exp.cpp
   src/dynamic_programming/obst.cpp
   src/dynamic_programming/rod_cutting.cpp
+  src/data_structures/bst.cpp
+  src/data_structures/chain_hash.cpp
+  src/data_structures/max_heap.cpp
+  src/data_structures/rb_tree.cpp
+  src/data_structures/van_emde_boas.cpp
+  src/sorting/sort.cpp
   src/strings/kmp.cpp
   src/strings/rolling_hash.cpp
   src/strings/trie.cpp
@@ -96,6 +102,11 @@ if(INTROALGO_BUILD_EXAMPLES)
   introalgo_add_example(max_quad_exp_demo examples/dynamic_programming/max_quad_exp_demo.cpp)
   introalgo_add_example(obst_demo examples/dynamic_programming/obst_demo.cpp)
   introalgo_add_example(rod_cutting_demo examples/dynamic_programming/rod_cutting_demo.cpp)
+  introalgo_add_example(bst_demo examples/data_structures/bst_demo.cpp)
+  introalgo_add_example(chain_hash_demo examples/data_structures/chain_hash_demo.cpp)
+  introalgo_add_example(max_heap_demo examples/data_structures/max_heap_demo.cpp)
+  introalgo_add_example(van_emde_boas_demo examples/data_structures/van_emde_boas_demo.cpp)
+  introalgo_add_example(sort_demo examples/sorting/sort_demo.cpp)
   introalgo_add_example(kmp_demo examples/strings/kmp_demo.cpp)
   introalgo_add_example(rolling_hash_demo examples/strings/rolling_hash_demo.cpp)
   introalgo_add_example(trie_demo examples/strings/trie_demo.cpp)
@@ -130,6 +141,12 @@ if(INTROALGO_BUILD_TESTS)
     tests/test_max_quad_exp.cpp
     tests/test_obst.cpp
     tests/test_rod_cutting.cpp
+    tests/test_bst.cpp
+    tests/test_chain_hash.cpp
+    tests/test_max_heap.cpp
+    tests/test_rb_tree.cpp
+    tests/test_sort.cpp
+    tests/test_van_emde_boas.cpp
     tests/test_kmp.cpp
     tests/test_rolling_hash.cpp
     tests/test_trie.cpp

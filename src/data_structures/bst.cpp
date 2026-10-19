@@ -1,417 +1,277 @@
-#include <iostream>
+#include "introalgo/data_structures/bst.hpp"
+
+#include <algorithm>
+#include <limits>
+#include <ostream>
 #include <stack>
-#include <vector>
-using namespace std;
+#include <utility>
+
+namespace introalgo {
+
 /*below is bst*/
-class TreeNode{
-public:
-    int val;
-    TreeNode *p,*left,*right;
-    TreeNode() {val=0;left=nullptr;right=nullptr;p=nullptr;}
-    TreeNode (int va) {val=va;left=nullptr;right=nullptr;p=nullptr;}
-    TreeNode (int va, TreeNode* par) {val=va; p=par;right=nullptr;left=nullptr;}
-    TreeNode (int va, TreeNode* lef,TreeNode *righ){val=va;left=lef;right=righ;}
-    TreeNode (int va,TreeNode* par,TreeNode* lef,TreeNode* righ){val=va;p=par;left=lef;right=righ;}
-    void insert(int val);
-    void insert(TreeNode* node);
-    void inorder_traverse();
-    TreeNode* getMin();
-    TreeNode* getMax();
-    TreeNode* getPredecessor(TreeNode* root);
-    TreeNode* getSuccessor(TreeNode* root);
-    TreeNode* search(int val);
-    int getDepth();
-    void delNode(TreeNode* root);
-    void delNode(int val);
-    void delNode();
-    void alternative(TreeNode* alt);
-    void change(int va1,int va2);
-    void threading();
-};
-void TreeNode::insert(int val){   // (The elements with same value in the left subtree)
-    this->insert(new TreeNode(val));
+TreeNode::TreeNode() : val(0), p(nullptr), left(nullptr), right(nullptr) {}
+TreeNode::TreeNode(int va) : val(va), p(nullptr), left(nullptr), right(nullptr) {}
+TreeNode::TreeNode(int va, TreeNode* par) : val(va), p(par), left(nullptr), right(nullptr) {}
+TreeNode::TreeNode(int va, TreeNode* lef, TreeNode* righ)
+    : val(va), p(nullptr), left(lef), right(righ) {
+    if (left) left->p = this;
+    if (right) right->p = this;
 }
-void TreeNode::insert(TreeNode* node){
-    TreeNode* q=this;
-    while(q){
-        if(node->val>q->val){
-            if(q->right) q=q->right;
-            else {
-                q->right=node;
-                node->p=q;
+TreeNode::TreeNode(int va, TreeNode* par, TreeNode* lef, TreeNode* righ)
+    : val(va), p(par), left(lef), right(righ) {
+    if (left) left->p = this;
+    if (right) right->p = this;
+}
+
+TreeNode::~TreeNode() {
+    std::vector<TreeNode*> pending;
+    if (left) pending.push_back(left);
+    if (right) pending.push_back(right);
+    left = right = nullptr;
+    while (!pending.empty()) {
+        TreeNode* n = pending.back();
+        pending.pop_back();
+        if (n->left) pending.push_back(n->left);
+        if (n->right) pending.push_back(n->right);
+        n->left = n->right = nullptr;  // so that ~TreeNode below does not recurse
+        delete n;
+    }
+}
+
+void TreeNode::insert(int value) {  // (The elements with same value in the left subtree)
+    this->insert(new TreeNode(value));
+}
+
+void TreeNode::insert(TreeNode* node) {
+    TreeNode* q = this;
+    while (q) {
+        if (node->val > q->val) {
+            if (q->right) {
+                q = q->right;
+            } else {
+                q->right = node;
+                node->p = q;
                 break;
             }
-        }
-        else{
-            if(q->left) q=q->left;
-            else {
-                q->left=node;
-                node->p=q;
+        } else {
+            if (q->left) {
+                q = q->left;
+            } else {
+                q->left = node;
+                node->p = q;
                 break;
             }
         }
     }
 }
-void TreeNode::inorder_traverse(){
-    TreeNode *root=this;
-    stack<TreeNode*> tree;
-    while(root||tree.size()){
-        while(root){
+
+void TreeNode::inorder_traverse(std::ostream& os) const {
+    for (int v : inorder()) os << v << std::endl;
+    os << "done" << std::endl;
+}
+
+std::vector<int> TreeNode::inorder() const {
+    std::vector<int> out;
+    const TreeNode* root = this;
+    std::stack<const TreeNode*> tree;
+    while (root || tree.size()) {
+        while (root) {
             tree.push(root);
-            root=root->left;
+            root = root->left;
         }
-        root=tree.top();
+        root = tree.top();
         tree.pop();
-        cout<<root->val<<endl;
-        root=root->right;
+        out.push_back(root->val);
+        root = root->right;
     }
-    cout<<"done"<<endl;
+    return out;
 }
-TreeNode* TreeNode::getMin(){
-    TreeNode* root=this;
-    while(!!root->left) root=root->left;
+
+TreeNode* TreeNode::getMin() {
+    TreeNode* root = this;
+    while (root->left) root = root->left;
     return root;
 }
-TreeNode* TreeNode::getMax(){
-    TreeNode* root=this;
-    while(!!root->right) root=root->right;
+
+TreeNode* TreeNode::getMax() {
+    TreeNode* root = this;
+    while (root->right) root = root->right;
     return root;
 }
-TreeNode* TreeNode::getPredecessor(TreeNode *root){
-    if(!root) return nullptr;
-    return root->left->getMax();
-}
-TreeNode* TreeNode::getSuccessor(TreeNode *root){
-    if(!root) return nullptr;
-    return root->right->getMin();
-}
-TreeNode* TreeNode::search(int va){
-    TreeNode* root=this;
-    while(root){
-        if(root->val==va) return root;
-        if(va>root->val) root=root->right;
-        else root=root->left;
+
+TreeNode* TreeNode::getPredecessor(TreeNode* node) {
+    if (!node) return nullptr;
+    if (node->left) return node->left->getMax();
+    // No left subtree: the predecessor is the closest ancestor of which we are in the right subtree.
+    TreeNode* up = node->p;
+    while (up && node == up->left) {
+        node = up;
+        up = up->p;
     }
-    cout<<"no element with such value in tree"<<endl;
+    return up;
+}
+
+TreeNode* TreeNode::getSuccessor(TreeNode* node) {
+    if (!node) return nullptr;
+    if (node->right) return node->right->getMin();
+    TreeNode* up = node->p;
+    while (up && node == up->right) {
+        node = up;
+        up = up->p;
+    }
+    return up;
+}
+
+TreeNode* TreeNode::search(int va) {
+    TreeNode* root = this;
+    while (root) {
+        if (root->val == va) return root;
+        if (va > root->val)
+            root = root->right;
+        else
+            root = root->left;
+    }
     return nullptr;
 }
-int TreeNode::getDepth(){
-    TreeNode *root=this;
-    int i=1;
-    while(root->p) {
-        root=root->p;
+
+int TreeNode::getDepth() const {
+    const TreeNode* root = this;
+    int i = 1;
+    while (root->p) {
+        root = root->p;
         i++;
     }
+    return i;
 }
-void TreeNode::delNode(TreeNode* root){
-    root->delNode();
-}
-void TreeNode::delNode(int val){
-    this->search(val)->delNode();
-}
-void TreeNode::delNode(){
-    TreeNode* root=this;
-    if(!root->left) {
-        root->alternative(root->right);
-        return;
+
+TreeNode* TreeNode::delNode() {
+    TreeNode* replacement;
+    if (!left) {
+        replacement = right;
+        alternative(right);
+    } else if (!right) {
+        replacement = left;
+        alternative(left);
+    } else {
+        TreeNode* pred = left->getMax();  // has no right child
+        if (pred != left) {
+            pred->alternative(pred->left);  // lift pred's left subtree into pred's old place
+            pred->left = left;
+            left->p = pred;
+        }
+        alternative(pred);
+        pred->right = right;
+        right->p = pred;
+        replacement = pred;
     }
-    if(!root->right) {
-        root->alternative(root->left);
-        return;
-    }
-    TreeNode* q=TreeNode::getPredecessor(root);
-    TreeNode* s=TreeNode::getSuccessor(root);
-    TreeNode* tar=nullptr;
-    if(!q&&!s) root->alternative(nullptr);
-    else if(q&&s) q->getDepth()>s->getDepth()?tar=q:tar=s;
-    else q?tar=q:tar=s;
-    if(tar==q) tar->alternative(tar->left);
-    else tar->alternative(tar->right);
-    root->alternative(tar);
-    tar->left->alternative(root->left);
-    tar->right->alternative(root->right);
+    p = left = right = nullptr;
+    return replacement;
 }
-void TreeNode::alternative(TreeNode* alt){
-    if(this->p) this->p->left==this?this->p->left=alt:this->p->right=alt;
-    if(alt) alt->p=this->p;
-}
-void TreeNode::change(int va1,int va2){
-    TreeNode* target=this->search(va1);
-    if(!target) {
-        cout<<"change failed"<<endl;
-        return;
+
+void TreeNode::alternative(TreeNode* alt) {
+    if (this->p) {
+        if (this->p->left == this)
+            this->p->left = alt;
+        else
+            this->p->right = alt;
     }
-    target->val=va2;
-    this->delNode(target);
-    this->insert(target);
+    if (alt) alt->p = this->p;
 }
-/*below is bbst*/
-class BbstNode:public TreeNode{
-public:
-    BbstNode *p,*left,*right;
-    BbstNode(){}
-    void leftRotate();
-    void rightRotate();
-    void leftRightRotate();
-    void rightLeftRotate();
-};
-void BbstNode::leftRotate(){
-    BbstNode *root=this,*righ=root->right;
-    if(!righ) {
-        cout<<"invalid operation: right subtree=null"<<endl;
-        return;
-    }
-    root->alternative(righ);
-    root->right=righ->left;
-    righ->left=root;
-    root->p=righ;
-    if(!!righ->left) righ->left->p=righ;
+
+/*below is the owning tree*/
+Bst::Bst() = default;
+Bst::~Bst() = default;
+
+TreeNode* Bst::find(int val) const {
+    TreeNode* n = top.get();
+    while (n && n->val != val) n = val > n->val ? n->right : n->left;
+    return n;
 }
-void BbstNode::rightRotate(){
-    BbstNode* root=this,*lef=root->left;
-    if(!lef) {
-        cout<<"invalid operation: right subtree=null"<<endl;
-        return;
-    }
-    root->alternative(lef);
-    root->left=lef->right;
-    lef->right=root;
-    root->p=lef;
-    if(!!lef->right) lef->right->p=lef;
+
+void Bst::insert(int val) {
+    if (!top)
+        top.reset(new TreeNode(val));
+    else
+        top->insert(val);
+    count++;
 }
-void BbstNode::leftRightRotate(){  //to be check
-    BbstNode *root=this;
-    if(!this->left) {
-        cout<<"invalid operation: right subtree=null"<<endl;
-        return;
+
+bool Bst::contains(int val) const { return find(val) != nullptr; }
+
+TreeNode* Bst::detach(TreeNode* node) {
+    const bool wasRoot = node == top.get();
+    TreeNode* replacement = node->delNode();
+    if (wasRoot) {
+        static_cast<void>(top.release());  // `node` is handed to the caller below
+        top.reset(replacement);
     }
-    this->left->leftRotate();
-    this->rightRotate();
+    return node;
 }
-void BbstNode::rightLeftRotate(){
-    BbstNode *root=this;
-    if(!this->right) {
-        cout<<"invalid operation: right subtree=null"<<endl;
-        return;
-    }
-    this->right->rightRotate();
-    this->leftRotate();
+
+bool Bst::erase(int val) {
+    TreeNode* node = find(val);
+    if (!node) return false;
+    std::unique_ptr<TreeNode> gone(detach(node));
+    count--;
+    return true;
 }
-/*below is rb tree*/
-class RbNode : public BbstNode {
-private:
-    static int counting;
-public:
-    int color; // 1:black, 0:red
-    RbNode *p, *left, *right;
-    static RbNode Nil;
-    static void sta_init(){
-        RbNode::Nil.color = 1;
-        counting=0;
+
+bool Bst::change(int va1, int va2) {
+    TreeNode* node = find(va1);
+    if (!node) return false;
+    TreeNode* moved = detach(node);
+    moved->val = va2;
+    if (!top)
+        top.reset(moved);
+    else
+        top->insert(moved);
+    return true;
+}
+
+std::vector<int> Bst::inorder() const { return top ? top->inorder() : std::vector<int>{}; }
+
+int Bst::height() const {
+    int levels = 0;
+    std::vector<const TreeNode*> level;
+    if (top) level.push_back(top.get());
+    while (!level.empty()) {
+        levels++;
+        std::vector<const TreeNode*> next;
+        for (const TreeNode* n : level) {
+            if (n->left) next.push_back(n->left);
+            if (n->right) next.push_back(n->right);
+        }
+        level.swap(next);
     }
-    RbNode() {
-        left = &Nil;
-        right = &Nil;
-        p = &Nil;
-        color = 0;
-        if(!counting++) {
-            Nil.left=this;
-            this->color=1;
+    return levels;
+}
+
+bool Bst::isValid() const {
+    if (!top) return count == 0;
+    if (top->p != nullptr) return false;
+    // Each stack entry carries the open interval (lo, hi] the subtree must stay within.
+    struct Frame {
+        const TreeNode* node;
+        long long lo, hi;  // lo < value <= hi
+    };
+    std::stack<Frame> todo;
+    todo.push({top.get(), std::numeric_limits<long long>::min(), std::numeric_limits<long long>::max()});
+    std::size_t seen = 0;
+    while (!todo.empty()) {
+        const Frame f = todo.top();
+        todo.pop();
+        ++seen;
+        if (!(f.lo < f.node->val && f.node->val <= f.hi)) return false;
+        if (f.node->left) {
+            if (f.node->left->p != f.node) return false;
+            todo.push({f.node->left, f.lo, f.node->val});
+        }
+        if (f.node->right) {
+            if (f.node->right->p != f.node) return false;
+            todo.push({f.node->right, f.node->val, f.hi});
         }
     }
-    
-    bool operator! () {
-        return (this == &Nil);
-    }
-    void insert(RbNode *tar);
-    void insert_fixup();
-    void delNode();
-    void delete_fixup(RbNode *lab);
-};
-RbNode RbNode::Nil;
-int RbNode::counting;
-void RbNode::insert(RbNode * tar){
-    if(!this) return;
-    if(tar==nullptr){
-        cout<<"wtf"<<endl;
-        return;
-    }
-    RbNode *root=this;
-    while(true){
-        if(root->val>=tar->val){
-            if(!(root->left)) {
-                root->left=tar;
-                tar->p=root;
-            }
-            else root=root->left;
-        }
-        else{
-            if(!(root->right)){
-                root->right=tar;
-                tar->p=root;
-            }
-            else root=root->right;
-        }
-    }
-    tar->insert_fixup();
+    return seen == count;
 }
-void RbNode::insert_fixup(){
-    RbNode *root=this;
-    if(!this) return;
-    while(!!root->p->p&&!root->p->color){
-        RbNode *u;
-        if(root->p==root->p->p->left){
-            u=root->p->p->right;
-            if(u->color==0){
-                u->p->color=0;
-                u->color=1;
-                root->p->color=1;
-                root=root->p;
-            }
-            else{
-                if(root=root->p->right){
-                    root=root->p;
-                    root->leftRotate();
-                }
-                root->p->color=1;
-                root->p->p->color=0;
-                root->p->p->rightRotate();
-            }
-        }
-        if(root->p==root->p->p->right){
-            u=root->p->p->left;
-            if(u->color=0){
-                u->color=1;
-                u->p->color=0;
-                root->p->color=1;
-                root=root->p;
-            }
-            else{
-                if(root->p->left=root){
-                    root=root->p;
-                    root->rightRotate();
-                }
-                root->p->color=1;
-                root->p->p->color=0;
-                root->p->p->leftRotate();
-            }
-        }
-    }
-    RbNode::Nil.left->color=1;
-}
-void RbNode::delNode(){
-    RbNode *root=this,*lab=nullptr;
-    if(!this) return;
-    if(!root->left) {
-        root->alternative(root->right);
-        lab=root->right;
-        return;
-    }
-    if(!root->right){
-        root->alternative(root->left);
-        lab=root->left;
-        return;
-    }
-    RbNode* s=(RbNode*)getSuccessor(root);
-    RbNode* q=(RbNode*)getPredecessor(root);
-    RbNode* tar=nullptr;
-    s->color==0?tar=s:tar=q;
-    if(tar==q){
-        lab=tar->left;
-    }
-    else {
-        lab=tar->right;
-    }
-    tar->alternative(lab);
-    root->alternative(tar);
-    tar->left->alternative(root->left);
-    tar->right->alternative(root->right);
-    int c=tar->color;
-    tar->color=root->color;
-    if(c) delete_fixup(lab);
-}
-void RbNode::delete_fixup(RbNode *lab){
-    while(lab->color&&lab->p!=&Nil){
-        RbNode* u;
-        if(lab==lab->p->left){
-            u=lab->p->right;
-            if(u->color==0){
-                u->color=1;
-                u->p->color=0;
-                u->p->leftRotate();
-                u=lab->p->right;
-            }
-            if(u->left->color==1&&u->left->color==1){
-                u->color=0;
-                lab=u->p;
-            }
-            else {
-                if(u->right->color==1){
-                    u->left->color=1;
-                    u->color=0;
-                    u->rightRotate();
-                    u=lab->p->right;
-                }
-                u->color=lab->p->color;
-                lab->p->color=1;
-                u->right->color=1;
-                lab->p->leftRotate();
-                lab=Nil.left;
-            }
-        }
-        if(lab=lab->p->right){
-            u=lab->p->left;
-            if(u->color=0){
-                u->color=1;
-                u->p->color=0;
-                u->p->rightRotate();
-                u=lab->p->left;
-            }
-            if(u->left->color==1&&u->right->color==1){
-                u->color=0;
-                lab=u->p;
-            }
-            else{
-                if(u->left->color=1){
-                    u->right->color=1;
-                    u->color=0;
-                    u->leftRotate();
-                    u=lab->p->left;
-                }
-                u->color=u->p->color;
-                lab->p->color=1;
-                u->left->color=1;
-                u->p->rightRotate();
-                lab=Nil.left;
-            }
-        }
-    }
-    lab->color=1;
-}
-/*below is AVL*/
-/*below is test*/
-void test_bst(){
-    vector<int> values{10,33,44,1323,42,99,0,1,4,29,4,5};
-    TreeNode* root=new TreeNode(values[0]);
-    TreeNode *tmp=root;
-    for(int i=1;i<values.size();i++) {
-        tmp->insert(values[i]);
-    }
-    root->inorder_traverse();
-    root->change(1323,11);
-    root->inorder_traverse();
-}
-void test_RB(){
-    RbNode::sta_init();
-    vector<int> values{10,33,44,1323,42,99,0,1,4,29,4,5};
-    TreeNode* root=new TreeNode(values[0]);
-    TreeNode *tmp=root;
-    for(int i=1;i<values.size();i++) {
-        tmp->insert(values[i]);
-    }
-    root->inorder_traverse();
-    root->inorder_traverse();
-}
-int main(){
-    test_RB();
-}
+
+}  // namespace introalgo
