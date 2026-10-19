@@ -29,7 +29,7 @@ jobs:
             cc: clang-18
             cxx: clang++-18
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install toolchain
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends clang-18
       - name: Configure
@@ -66,7 +66,7 @@ jobs:
       UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
       ASAN_OPTIONS: detect_leaks=1:strict_string_checks=1
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install toolchain
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends clang-18 libclang-rt-18-dev
       - name: Configure
@@ -82,7 +82,7 @@ jobs:
     name: clang-format
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install clang-format
         run: python3 -m pip install "clang-format==${CLANG_FORMAT_VERSION}"
       - name: Check formatting

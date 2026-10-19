@@ -1,0 +1,337 @@
+===== assignment6_spam_and_dna =====
+SpamDetect: 
+In Trie: 
+aebrq
+asd
+asda
+bqrqwf
+dasegawggdav
+davcase
+davsef
+efwd
+vasdawdf
+vasve
+vwdfd
+detected: asda
+detected: asd
+detected: bqrqwf
+detected: VASVE
+detected: efwd
+detected: dasegawggdav
+
+DNAMatch: 
+target: TATTACTAGCTACTGTACTCGGCAGCCTATTCACTAGCTACTGTACTGGAGTACTATTCGGTGCGTATTCGACTAGCTACTGTACTGATAACGTACGT
+pattern: ACTAGCTACTGTACT
+Pattern appears in following positions: 4 32 71 
+
+===== bitonic_tour_demo =====
+shortest bitonic tour length: 25.584
+tour: (0,6) (2,3) (5,4) (7,5) (8,2) (6,1) (1,0) (back to start)
+
+===== bst_demo =====
+BST in order: 0 1 4 4 5 10 29 33 42 44 99 1323  (height 5)
+after change(1323, 11): 0 1 4 4 5 10 11 29 33 42 44 99
+red-black tree in order: 0 1 4 4 5 10 29 33 42 44 99 1323  (height 5, valid: yes)
+
+===== chain_hash_demo =====
+bucket 2: 42
+bucket 5: 5 15 25
+bucket 7: 7 17
+after deleting 15, bucket 5: 5 25
+
+===== constrained_permutations_demo =====
+question: 9 number 3 increasing and 3 decreasing;
+list of 100 possible answers:
+3 2 1 6 5 4 9 8 7 
+3 2 1 6 5 9 4 8 7 
+3 2 1 6 5 9 8 4 7 
+3 2 1 6 9 5 4 8 7 
+3 2 1 6 9 5 8 4 7 
+3 2 1 7 5 4 9 8 6 
+3 2 1 7 5 9 4 8 6 
+3 2 1 7 5 9 8 4 6 
+3 2 1 7 6 4 9 8 5 
+3 2 1 7 6 9 4 8 5 
+3 2 1 7 6 9 8 4 5 
+3 2 1 7 9 5 4 8 6 
+3 2 1 7 9 5 8 4 6 
+3 2 1 7 9 6 4 8 5 
+3 2 1 7 9 6 8 4 5 
+3 2 1 8 5 4 9 7 6 
+3 2 1 8 5 9 4 7 6 
+3 2 1 8 5 9 7 4 6 
+3 2 1 8 6 4 9 7 5 
+3 2 1 8 6 9 4 7 5 
+3 2 1 8 6 9 7 4 5 
+3 2 1 8 9 5 4 7 6 
+3 2 1 8 9 5 7 4 6 
+3 2 1 8 9 6 4 7 5 
+3 2 1 8 9 6 7 4 5 
+3 2 6 1 5 4 9 8 7 
+3 2 6 1 5 9 4 8 7 
+3 2 6 1 5 9 8 4 7 
+3 2 6 1 9 5 4 8 7 
+3 2 6 1 9 5 8 4 7 
+3 2 6 5 1 4 9 8 7 
+3 2 6 5 1 9 4 8 7 
+3 2 6 5 1 9 8 4 7 
+3 2 6 5 9 1 4 8 7 
+3 2 6 5 9 1 8 4 7 
+3 2 6 5 9 8 1 4 7 
+3 2 6 9 1 5 4 8 7 
+3 2 6 9 1 5 8 4 7 
+3 2 6 9 5 1 4 8 7 
+3 2 6 9 5 1 8 4 7 
+3 2 6 9 5 8 1 4 7 
+3 2 7 1 5 4 9 8 6 
+3 2 7 1 5 9 4 8 6 
+3 2 7 1 5 9 8 4 6 
+3 2 7 1 6 4 9 8 5 
+3 2 7 1 6 9 4 8 5 
+3 2 7 1 6 9 8 4 5 
+3 2 7 1 9 5 4 8 6 
+3 2 7 1 9 5 8 4 6 
+3 2 7 1 9 6 4 8 5 
+3 2 7 1 9 6 8 4 5 
+3 2 7 5 1 4 9 8 6 
+3 2 7 5 1 9 4 8 6 
+3 2 7 5 1 9 8 4 6 
+3 2 7 5 9 1 4 8 6 
+3 2 7 5 9 1 8 4 6 
+3 2 7 5 9 8 1 4 6 
+3 2 7 6 1 4 9 8 5 
+3 2 7 6 1 9 4 8 5 
+3 2 7 6 1 9 8 4 5 
+3 2 7 6 9 1 4 8 5 
+3 2 7 6 9 1 8 4 5 
+3 2 7 6 9 8 1 4 5 
+3 2 7 9 1 5 4 8 6 
+3 2 7 9 1 5 8 4 6 
+3 2 7 9 1 6 4 8 5 
+3 2 7 9 1 6 8 4 5 
+3 2 7 9 5 1 4 8 6 
+3 2 7 9 5 1 8 4 6 
+3 2 7 9 5 8 1 4 6 
+3 2 7 9 6 1 4 8 5 
+3 2 7 9 6 1 8 4 5 
+3 2 7 9 6 8 1 4 5 
+3 2 8 1 5 4 9 7 6 
+3 2 8 1 5 9 4 7 6 
+3 2 8 1 5 9 7 4 6 
+3 2 8 1 6 4 9 7 5 
+3 2 8 1 6 9 4 7 5 
+3 2 8 1 6 9 7 4 5 
+3 2 8 1 9 5 4 7 6 
+3 2 8 1 9 5 7 4 6 
+3 2 8 1 9 6 4 7 5 
+3 2 8 1 9 6 7 4 5 
+3 2 8 5 1 4 9 7 6 
+3 2 8 5 1 9 4 7 6 
+3 2 8 5 1 9 7 4 6 
+3 2 8 5 9 1 4 7 6 
+3 2 8 5 9 1 7 4 6 
+3 2 8 5 9 7 1 4 6 
+3 2 8 6 1 4 9 7 5 
+3 2 8 6 1 9 4 7 5 
+3 2 8 6 1 9 7 4 5 
+3 2 8 6 9 1 4 7 5 
+3 2 8 6 9 1 7 4 5 
+3 2 8 6 9 7 1 4 5 
+3 2 8 9 1 5 4 7 6 
+3 2 8 9 1 5 7 4 6 
+3 2 8 9 1 6 4 7 5 
+3 2 8 9 1 6 7 4 5 
+3 2 8 9 5 1 4 7 6 
+number of answers: 1764
+
+===== edit_distance_demo =====
+edit distance(kitten, sitting) = 3
+
+===== flow_graph_demo =====
+max flow s -> t: 23
+  s -> v1: 12/16
+  s -> v2: 11/13
+  v1 -> v3: 12/12
+  v2 -> v4: 11/14
+  v4 -> v3: 7/7
+  v3 -> t: 19/20
+  v4 -> t: 4/4
+
+===== graph_demo =====
+00000000000000000000
+0 1 1 0 1 0 0 0 0 0 0
+1 0 1 1 0 0 0 0 0 0 0
+1 1 0 1 0 0 0 0 0 0 0
+0 1 1 0 1 1 0 0 0 0 0
+1 0 0 1 0 1 0 0 0 0 0
+0 0 0 1 1 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 1 0 0
+0 0 0 0 0 0 0 0 1 0 0
+0 0 0 0 0 0 1 1 0 1 1
+0 0 0 0 0 0 0 0 1 0 0
+0 0 0 0 0 0 0 0 1 0 0
+components: 2, directed: no, has cycle: yes
+BFS from 0: 0 1 2 4 3 5
+----------------------------after------------------------
+ 0  1  1  2  1  2  .  .  .  .  . 
+ 1  0  1  1  2  2  .  .  .  .  . 
+ 1  1  0  1  2  2  .  .  .  .  . 
+ 2  1  1  0  1  1  .  .  .  .  . 
+ 1  2  2  1  0  1  .  .  .  .  . 
+ 2  2  2  1  1  0  .  .  .  .  . 
+ .  .  .  .  .  .  0  2  1  2  2 
+ .  .  .  .  .  .  2  0  1  2  2 
+ .  .  .  .  .  .  1  1  0  1  1 
+ .  .  .  .  .  .  2  2  1  0  2 
+ .  .  .  .  .  .  2  2  1  2  0 
+
+===== kmp_demo =====
+4 32 71 
+
+===== knapsack_01_demo =====
+best value: 220
+items taken (0-based): 0 1
+
+===== lcs_demo =====
+6
+010101
+
+===== lmis_demo =====
+longest increasing subsequence has length 4: 2 5 7 101 
+
+===== lup_demo =====
+-0.157895 -0.0526316 3.10526 
+P:
+2 0 3 1 
+A:
+5 5 4 2 
+0.4 -2 0.4 -0.2 
+-0.2 0.5 4 -0.5 
+0.6 -0 0.4 -3 
+determinant: -120
+
+===== max_heap_demo =====
+63546 
+2345 4452 
+345 42 478 1323 
+44 245 29 34 33 99 0 464 
+1 10 4 243 4 5 
+largest: 63546
+
+===== max_quad_exp_demo =====
+     5     -3      4     25     65    200 
+    -3      8     15     60     52     75 
+   -10     15      7     28     20     35 
+   -55     36     28      4     -4      5 
+   -63    -60    -28     -4      8     17 
+   -94   -195    -91    -13     17      9 
+200
+(5-((8+7)*(4-(8+9)))) = 200
+
+===== obst_demo =====
+root is k5, the OBST expectation is 3.12
+the left child of k5 is k2
+the right child of k5 is k7
+the left child of k2 is k1
+the right child of k2 is k3
+the right child of k7 is d7
+the left child of k7 is k6
+the left child of k1 is d0
+the right child of k1 is d1
+the left child of k3 is d2
+the right child of k3 is k4
+the left child of k6 is d5
+the right child of k6 is d6
+the left child of k4 is d3
+the right child of k4 is d4
+
+===== optimal_stopping_demo =====
+0.369461
+73
+
+===== out_of_ranking_demo =====
+similarity is: 5
+
+===== rod_cutting_demo =====
+rod of length 4: revenue 10, pieces 2 2
+rod of length 7: revenue 18, pieces 1 6
+rod of length 10: revenue 30, pieces 10
+
+===== rolling_hash_demo =====
+4 32 71 
+
+===== rotating_cube_demo =====
+face-on:
+                                  
+                                  
+                                  
+                                  
+                                  
+        * * * * * * * * *         
+        * * * * * * * * *         
+        * * * * * * * * *         
+        * * * * * * * * *         
+        * * * * * * * * *         
+        * * * * * * * * *         
+        * * * * * * * * *         
+        * * * * * * * * *         
+        * * * * * * * * *         
+                                  
+                                  
+                                  
+after rotating by (60, 25, 15) degrees:
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                        *         
+                    * * * *       
+                  * * * * *       
+              * * * * * * * *     
+          * * * * * * * * * *     
+          * * * * * * * *         
+            * * * * * *           
+              * *                 
+                                  
+
+===== simplex_demo =====
+optimal objective: 28
+x = (8, 4, 0)
+
+===== solar_panels_demo =====
+houses served: 3
+
+===== sort_demo =====
+0 0 5 2 6 
+0 3 7 3 4 
+0 5 7 6 4 
+1 0 3 4 0 
+3 8 8 8 3 
+4 3 6 6 2 
+5 3 9 1 0 
+5 6 1 5 1 
+5 6 8 1 4 
+5 7 3 1 7 
+5 9 9 4 2 
+6 2 5 3 5 
+6 4 4 6 2 
+7 8 7 7 8 
+8 8 1 6 6 
+counting sort: 0 1 1 2 3 3 3 4 4 5 5 5 5 7 8 10 29 33 42 44 99 1323 
+
+===== trie_demo =====
+detected: asda
+detected: asd
+detected: bqrqwf
+detected: efwd
+detected: dasegawggdav
+
+===== van_emde_boas_demo =====
+min 2, max 15
+successor(5) = 7, predecessor(5) = 4
+after deleting 7: successor(5) = 14
+
