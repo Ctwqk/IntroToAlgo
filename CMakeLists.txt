@@ -49,6 +49,14 @@ endif()
 # ----------------------------------------------------------------------------
 set(INTROALGO_SOURCES
   src/divide_and_conquer/out_of_ranking.cpp
+  src/dynamic_programming/bitonic_tour.cpp
+  src/dynamic_programming/edit_distance.cpp
+  src/dynamic_programming/knapsack_01.cpp
+  src/dynamic_programming/lcs.cpp
+  src/dynamic_programming/lmis.cpp
+  src/dynamic_programming/max_quad_exp.cpp
+  src/dynamic_programming/obst.cpp
+  src/dynamic_programming/rod_cutting.cpp
 )
 
 add_library(introalgo STATIC ${INTROALGO_SOURCES})
@@ -77,6 +85,14 @@ if(INTROALGO_BUILD_EXAMPLES)
   endfunction()
 
   introalgo_add_example(out_of_ranking_demo examples/divide_and_conquer/out_of_ranking_demo.cpp)
+  introalgo_add_example(bitonic_tour_demo examples/dynamic_programming/bitonic_tour_demo.cpp)
+  introalgo_add_example(edit_distance_demo examples/dynamic_programming/edit_distance_demo.cpp)
+  introalgo_add_example(knapsack_01_demo examples/dynamic_programming/knapsack_01_demo.cpp)
+  introalgo_add_example(lcs_demo examples/dynamic_programming/lcs_demo.cpp)
+  introalgo_add_example(lmis_demo examples/dynamic_programming/lmis_demo.cpp)
+  introalgo_add_example(max_quad_exp_demo examples/dynamic_programming/max_quad_exp_demo.cpp)
+  introalgo_add_example(obst_demo examples/dynamic_programming/obst_demo.cpp)
+  introalgo_add_example(rod_cutting_demo examples/dynamic_programming/rod_cutting_demo.cpp)
 endif()
 
 # ----------------------------------------------------------------------------
@@ -99,6 +115,14 @@ if(INTROALGO_BUILD_TESTS)
 
   add_executable(introalgo_tests
     tests/test_out_of_ranking.cpp
+    tests/test_bitonic_tour.cpp
+    tests/test_edit_distance.cpp
+    tests/test_knapsack_01.cpp
+    tests/test_lcs.cpp
+    tests/test_lmis.cpp
+    tests/test_max_quad_exp.cpp
+    tests/test_obst.cpp
+    tests/test_rod_cutting.cpp
   )
   target_include_directories(introalgo_tests PRIVATE tests)
   target_link_libraries(introalgo_tests PRIVATE introalgo introalgo_warnings GTest::gtest_main)

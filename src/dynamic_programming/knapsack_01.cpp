@@ -1,35 +1,46 @@
-#include <iostream>
+#include "introalgo/dynamic_programming/knapsack_01.hpp"
 
-using namespace std;
-class knapsack{
-private:
-    int size;
-    int capacity;//weight capacity;
-    pair<int,int> *value_weight;
-    int **dptab;
-public:
-    knapsack(int n,pair<int,int> *v_w,int cap):size(n),value_weight(v_w),capacity(cap){
-        dptab=new int*[size+1];
-        for(int i=0;i<=size;i++) dptab[i]=new int[capacity+1]();
-    }
-    void solve();
-    
-};
-void knapsack::solve(){
-    for(int i=1;i<=size;i++){
-        for(int j=1;j<=capacity;j++){
-            if(value_weight[i-1].second>j) continue;
-            dptab[i][j]=max(dptab[i-1][j],dptab[i-1][j-value_weight[i-1].second]+value_weight[i-1].first);
+#include <algorithm>
+#include <stdexcept>
+#include <utility>
+
+namespace introalgo {
+
+Knapsack::Knapsack(std::vector<std::pair<int, int>> v_w, int cap)
+    : size(static_cast<int>(v_w.size())),
+      capacity(std::max(cap, 0)),
+      value_weight(std::move(v_w)),
+      dptab(static_cast<std::size_t>(size) + 1,
+            std::vector<int>(static_cast<std::size_t>(capacity) + 1, 0)) {
+    for (const auto& item : value_weight)
+        if (item.second < 0) throw std::invalid_argument("Knapsack: negative weight");
+}
+
+int Knapsack::solve() {
+    for (int i = 1; i <= size; i++) {
+        const int value = value_weight[i - 1].first;
+        const int weight = value_weight[i - 1].second;
+        for (int j = 0; j <= capacity; j++) {
+            // An item that does not fit leaves the best value of the previous row
+            // (the original left a 0 here and patched the answer afterwards).
+            dptab[i][j] = dptab[i - 1][j];
+            if (weight <= j) dptab[i][j] = std::max(dptab[i][j], dptab[i - 1][j - weight] + value);
         }
     }
-    for(int i=1;i<size;i++) if(dptab[i][capacity]>dptab[size][capacity]) dptab[size][capacity]=dptab[i][capacity];
-    cout<<dptab[size][capacity];
+    return dptab[size][capacity];
 }
-int main(){
-    pair<int,int> *p=new pair<int,int> [3];
-    p[0]=make_pair(100,20);
-    p[1]=make_pair(120,30);
-    p[2]=make_pair(60,10);
-    knapsack *k=new knapsack(3,p,50);
-    k->solve();
+
+std::vector<int> Knapsack::chosenItems() const {
+    std::vector<int> items;
+    int j = capacity;
+    for (int i = size; i >= 1; i--) {
+        if (dptab[i][j] != dptab[i - 1][j]) {  // item i-1 was needed
+            items.push_back(i - 1);
+            j -= value_weight[i - 1].second;
+        }
+    }
+    std::reverse(items.begin(), items.end());
+    return items;
 }
+
+}  // namespace introalgo
