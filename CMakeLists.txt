@@ -78,6 +78,9 @@ set(INTROALGO_SOURCES
   src/strings/trie.cpp
 )
 
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
 add_library(introalgo STATIC ${INTROALGO_SOURCES})
 add_library(introalgo::introalgo ALIAS introalgo)
 target_compile_features(introalgo PUBLIC cxx_std_17)
@@ -86,8 +89,6 @@ target_include_directories(introalgo PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(introalgo PRIVATE "$<BUILD_INTERFACE:introalgo_warnings>")
 
-include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
 install(TARGETS introalgo EXPORT introalgoTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(EXPORT introalgoTargets NAMESPACE introalgo:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/introalgo)
