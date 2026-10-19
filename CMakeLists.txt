@@ -62,6 +62,8 @@ set(INTROALGO_SOURCES
   src/data_structures/max_heap.cpp
   src/data_structures/rb_tree.cpp
   src/data_structures/van_emde_boas.cpp
+  src/graph/flow_graph.cpp
+  src/graph/graph.cpp
   src/sorting/sort.cpp
   src/strings/kmp.cpp
   src/strings/rolling_hash.cpp
@@ -107,6 +109,8 @@ if(INTROALGO_BUILD_EXAMPLES)
   introalgo_add_example(max_heap_demo examples/data_structures/max_heap_demo.cpp)
   introalgo_add_example(van_emde_boas_demo examples/data_structures/van_emde_boas_demo.cpp)
   introalgo_add_example(sort_demo examples/sorting/sort_demo.cpp)
+  introalgo_add_example(flow_graph_demo examples/graph/flow_graph_demo.cpp)
+  introalgo_add_example(graph_demo examples/graph/graph_demo.cpp)
   introalgo_add_example(kmp_demo examples/strings/kmp_demo.cpp)
   introalgo_add_example(rolling_hash_demo examples/strings/rolling_hash_demo.cpp)
   introalgo_add_example(trie_demo examples/strings/trie_demo.cpp)
@@ -147,6 +151,8 @@ if(INTROALGO_BUILD_TESTS)
     tests/test_rb_tree.cpp
     tests/test_sort.cpp
     tests/test_van_emde_boas.cpp
+    tests/test_flow_graph.cpp
+    tests/test_graph.cpp
     tests/test_kmp.cpp
     tests/test_rolling_hash.cpp
     tests/test_trie.cpp
