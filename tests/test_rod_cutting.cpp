@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <limits>
 #include <numeric>
 #include <vector>
 
@@ -60,4 +61,20 @@ TEST(RodCutting, RandomizedMatchesExhaustiveSearch) {
         RodCutting rod(price);
         EXPECT_EQ(rod.bestRevenue(n), bruteForce(price, n));
     }
+}
+
+TEST(RodCutting, LowestPriceHasAReconstructibleCut) {
+    const int lo = std::numeric_limits<int>::min();
+    RodCutting rod({lo, lo});
+    EXPECT_EQ(rod.bestRevenue(1), lo);
+    EXPECT_EQ(rod.cuts(1), (std::vector<int>{1}));
+    // Two length-one pieces underflow int, but the uncut rod is representable and better.
+    EXPECT_EQ(rod.bestRevenue(2), lo);
+    EXPECT_EQ(rod.cuts(2), (std::vector<int>{2}));
+}
+
+TEST(RodCutting, UnrepresentableRevenueThrows) {
+    RodCutting rod({std::numeric_limits<int>::max(), 0});
+    EXPECT_THROW(rod.bestRevenue(2), std::overflow_error);
+    EXPECT_THROW(rod.cuts(2), std::overflow_error);
 }

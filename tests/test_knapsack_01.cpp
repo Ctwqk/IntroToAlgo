@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <limits>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -82,4 +83,12 @@ TEST(Knapsack, RandomizedMatchesExhaustiveSearch) {
         EXPECT_EQ(value, bruteForce(items, capacity));
         EXPECT_LE(weight, capacity);
     }
+}
+
+TEST(Knapsack, IntegerLimitsAreChecked) {
+    const int hi = std::numeric_limits<int>::max();
+    const int lo = std::numeric_limits<int>::min();
+    EXPECT_EQ(Knapsack({{hi, 1}, {lo, 1}}, 2).solve(), hi);
+    EXPECT_THROW(Knapsack({{hi, 1}, {1, 1}}, 2).solve(), std::overflow_error);
+    EXPECT_THROW(Knapsack({{hi, 0}, {1, 0}}, 0).solve(), std::overflow_error);
 }

@@ -4,6 +4,8 @@
 #include <limits>
 #include <queue>
 
+#include "../checked_arithmetic.hpp"
+
 namespace introalgo {
 
 FlowGraph::FlowGraph(int v) : adj(static_cast<std::size_t>(v < 0 ? 0 : v)) {}
@@ -24,6 +26,7 @@ bool FlowGraph::addEdge(int x, int y, long long cap) {
 
 void FlowGraph::reset() {
     for (auto& a : arcs) a.flow = 0;
+    source = -1;
 }
 
 long long FlowGraph::maxFlow(int s, int t) {
@@ -55,6 +58,10 @@ long long FlowGraph::maxFlow(int s, int t) {
         long long bottleneck = std::numeric_limits<long long>::max();
         for (int v = t; v != s; v = arcs[parentArc[v] ^ 1].to)
             bottleneck = std::min(bottleneck, residualOf(arcs[parentArc[v]]));
+        if (total > std::numeric_limits<long long>::max() - bottleneck) {
+            reset();
+            throw std::overflow_error("FlowGraph: maximum flow exceeds long long range");
+        }
         for (int v = t; v != s; v = arcs[parentArc[v] ^ 1].to) {
             arcs[parentArc[v]].flow += bottleneck;
             arcs[parentArc[v] ^ 1].flow -= bottleneck;
@@ -68,7 +75,7 @@ long long FlowGraph::flow(int x, int y) const {
     long long f = 0;
     if (!valid(x) || !valid(y)) return 0;
     for (int id : adj[x])
-        if (id % 2 == 0 && arcs[id].to == y) f += arcs[id].flow;
+        if (id % 2 == 0 && arcs[id].to == y) f = detail::checkedAdd(f, arcs[id].flow);
     return f;
 }
 
@@ -76,7 +83,7 @@ long long FlowGraph::capacity(int x, int y) const {
     long long c = 0;
     if (!valid(x) || !valid(y)) return 0;
     for (int id : adj[x])
-        if (id % 2 == 0 && arcs[id].to == y) c += arcs[id].cap;
+        if (id % 2 == 0 && arcs[id].to == y) c = detail::checkedAdd(c, arcs[id].cap);
     return c;
 }
 
@@ -85,7 +92,7 @@ long long FlowGraph::residual(int x, int y) const {
     long long r = 0;
     if (!valid(x) || !valid(y)) return 0;
     for (int id : adj[x])
-        if (arcs[id].to == y) r += residualOf(arcs[id]);
+        if (arcs[id].to == y) r = detail::checkedAdd(r, residualOf(arcs[id]));
     return r;
 }
 

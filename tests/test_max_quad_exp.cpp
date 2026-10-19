@@ -183,3 +183,15 @@ TEST(MaxQuadExp, DivisionNeverExceedsTheTrueMaximum) {
             << text << " produced " << got << ", which no parenthesization yields";
     }
 }
+
+TEST(MaxQuadExp, IntegerOverflowThrowsInsteadOfWrapping) {
+    for (const char* text :
+         {"999999999999999*999999999999999", "3037000499*3037000499+999999999999999",
+          "0-3037000499*3037000499-999999999999999"}) {
+        Expression e(text);
+        EXPECT_THROW(e.calculateMax(), std::overflow_error) << text;
+        EXPECT_THROW(e.calculateMin(), std::overflow_error) << text;
+    }
+    EXPECT_EQ(Expression("3037000499*3037000499").calculateMax(), 9223372030926249001LL);
+    EXPECT_EQ(Expression("0-3037000499*3037000499").calculateMin(), -9223372030926249001LL);
+}

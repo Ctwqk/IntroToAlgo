@@ -11,7 +11,8 @@ class Knapsack {
 public:
     Knapsack(std::vector<std::pair<int, int>> value_weight, int capacity);
 
-    /// Maximum total value that fits into the capacity.
+    /// Maximum total value that fits into the capacity; throws std::overflow_error if it
+    /// exceeds int range.
     int solve();
 
     /// Indices of one optimal set of items (valid after solve()).

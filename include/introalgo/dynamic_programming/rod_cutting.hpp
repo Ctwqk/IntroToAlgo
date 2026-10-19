@@ -16,6 +16,7 @@ public:
     explicit RodCutting(std::vector<int> price);
 
     /// Best revenue for a rod of the given length (0 <= length <= price.size()).
+    /// Both queries throw std::overflow_error if an optimal subproblem revenue exceeds int range.
     int bestRevenue(int length);
 
     /// Lengths of the pieces of one optimal cut of a rod of the given length.

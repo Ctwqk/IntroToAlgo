@@ -1,9 +1,12 @@
 #include "introalgo/dynamic_programming/max_quad_exp.hpp"
 
 #include <iomanip>
+#include <limits>
 #include <ostream>
 #include <stdexcept>
 #include <utility>
+
+#include "../checked_arithmetic.hpp"
 
 namespace introalgo {
 
@@ -56,17 +59,19 @@ namespace {
 bool apply(long long a, long long b, char c, long long& out) {
     switch (c) {
         case '+':
-            out = a + b;
+            out = detail::checkedAdd(a, b);
             return true;
         case '-':
-            out = a - b;
+            out = detail::checkedSubtract(a, b);
             return true;
         case '*':
         case 'x':
-            out = a * b;
+            out = detail::checkedMultiply(a, b);
             return true;
         case '/':
             if (b == 0) return false;
+            if (a == std::numeric_limits<long long>::min() && b == -1)
+                throw std::overflow_error("Expression: division exceeds long long range");
             out = a / b;
             return true;
     }

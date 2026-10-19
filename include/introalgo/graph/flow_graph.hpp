@@ -34,9 +34,11 @@ public:
 
     /// Computes a maximum s-t flow (any flow from an earlier call is discarded first).
     /// Throws std::invalid_argument if s == t or a vertex is unknown.
+    /// Throws std::overflow_error and resets all flows if the total exceeds long long range.
     long long maxFlow(int s, int t);
 
     /// Total flow / capacity / remaining residual capacity on the edges x -> y.
+    /// Throws std::overflow_error if the sum exceeds long long range.
     long long flow(int x, int y) const;
     long long capacity(int x, int y) const;
     long long residual(int x, int y) const;

@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -195,4 +196,21 @@ TEST(LabeledFlowGraph, VerticesCanBeAnyOrderedType) {
     EXPECT_EQ(g.flow("a", "sink"), 5);
     EXPECT_EQ(g.underlying().vertices(), 4);
     EXPECT_THROW(g.maxFlow("source", "nowhere"), std::invalid_argument);
+}
+
+TEST(FlowGraph, IntegerCapacityLimitsAreChecked) {
+    const long long hi = std::numeric_limits<long long>::max();
+    FlowGraph single = build(2, {{0, 1, hi}});
+    EXPECT_EQ(single.maxFlow(0, 1), hi);
+    EXPECT_EQ(single.residual(1, 0), hi);
+    FlowGraph parallel = build(2, {{0, 1, hi}, {0, 1, 1}});
+    EXPECT_THROW(parallel.capacity(0, 1), std::overflow_error);
+    EXPECT_THROW(parallel.residual(0, 1), std::overflow_error);
+    EXPECT_THROW(parallel.maxFlow(0, 1), std::overflow_error);
+    // A failed solve discards the partial flow; the graph can be solved again.
+    EXPECT_EQ(parallel.flow(0, 1), 0);
+    EXPECT_EQ(parallel.maxFlow(1, 0), 0);
+    FlowGraph opposite = build(2, {{0, 1, hi}, {1, 0, hi}});
+    EXPECT_EQ(opposite.maxFlow(0, 1), hi);
+    EXPECT_THROW(opposite.residual(1, 0), std::overflow_error);
 }

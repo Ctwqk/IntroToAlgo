@@ -14,15 +14,21 @@ void RodCutting::fill(int length) {
     revenue.assign(static_cast<std::size_t>(length) + 1, 0);
     firstCut.assign(static_cast<std::size_t>(length) + 1, 0);
     for (int l = 1; l <= length; l++) {
-        int best = std::numeric_limits<int>::min();
+        // The uncut rod is always feasible, even when its price is INT_MIN. Using INT_MIN
+        // as an unset sentinel left firstCut at zero and made reconstruction loop forever.
+        long long best = price[l - 1];
+        firstCut[l] = l;
         for (int piece = 1; piece <= l; piece++) {
-            const int candidate = price[piece - 1] + revenue[l - piece];
+            const long long candidate =
+                static_cast<long long>(price[piece - 1]) + revenue[l - piece];
             if (candidate > best) {
                 best = candidate;
                 firstCut[l] = piece;
             }
         }
-        revenue[l] = best;
+        if (best > std::numeric_limits<int>::max())
+            throw std::overflow_error("RodCutting: revenue exceeds int range");
+        revenue[l] = static_cast<int>(best);
     }
 }
 

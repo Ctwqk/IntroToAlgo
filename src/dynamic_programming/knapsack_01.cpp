@@ -1,6 +1,7 @@
 #include "introalgo/dynamic_programming/knapsack_01.hpp"
 
 #include <algorithm>
+#include <limits>
 #include <stdexcept>
 #include <utility>
 
@@ -24,7 +25,13 @@ int Knapsack::solve() {
             // An item that does not fit leaves the best value of the previous row
             // (the original left a 0 here and patched the answer afterwards).
             dptab[i][j] = dptab[i - 1][j];
-            if (weight <= j) dptab[i][j] = std::max(dptab[i][j], dptab[i - 1][j - weight] + value);
+            if (weight <= j) {
+                const long long candidate =
+                    static_cast<long long>(dptab[i - 1][j - weight]) + value;
+                if (candidate > std::numeric_limits<int>::max())
+                    throw std::overflow_error("Knapsack: value exceeds int range");
+                dptab[i][j] = std::max(dptab[i][j], static_cast<int>(candidate));
+            }
         }
     }
     return dptab[size][capacity];

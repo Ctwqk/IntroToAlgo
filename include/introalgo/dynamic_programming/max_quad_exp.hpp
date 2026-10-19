@@ -19,7 +19,8 @@ namespace introalgo {
 /// sub-results only, which is a heuristic (the quotient is not monotone in the
 /// divisor); it always returns a value that some parenthesization really
 /// produces, but not necessarily the largest one.  Parenthesizations that divide
-/// by zero are skipped.  Values are 64-bit and overflow is not checked.
+/// by zero are skipped. Values use long long; any evaluated intermediate overflow throws
+/// std::overflow_error (even if another parenthesization would fit).
 ///
 /// O(n^3) time and O(n^2) space for n operands.
 class Expression {

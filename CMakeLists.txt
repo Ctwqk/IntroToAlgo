@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.24)
 
 project(IntroToAlgo
   VERSION 1.0.0
@@ -114,7 +114,7 @@ if(INTROALGO_BUILD_EXAMPLES)
     target_link_libraries(${name} PRIVATE introalgo introalgo_warnings)
     set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples)
     add_test(NAME example.${name} COMMAND ${name})
-    set_tests_properties(example.${name} PROPERTIES LABELS example)
+    set_tests_properties(example.${name} PROPERTIES LABELS example TIMEOUT 60)
   endfunction()
 
   introalgo_add_example(examples/assignment6_spam_and_dna.cpp)
@@ -153,7 +153,7 @@ if(INTROALGO_BUILD_BENCHMARKS)
   target_link_libraries(scaling PRIVATE introalgo introalgo_warnings)
   set_target_properties(scaling PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/benchmarks)
   add_test(NAME benchmark.scaling_quick COMMAND scaling --quick)
-  set_tests_properties(benchmark.scaling_quick PROPERTIES LABELS benchmark)
+  set_tests_properties(benchmark.scaling_quick PROPERTIES LABELS benchmark TIMEOUT 60)
 endif()
 
 # ----------------------------------------------------------------------------
@@ -170,7 +170,7 @@ if(INTROALGO_BUILD_TESTS)
     FetchContent_Declare(googletest
       URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.tar.gz
       URL_HASH SHA256=65fab701d9829d38cb77c14acdc431d2108bfdbf8979e40eb8ae567edf10b27c
-      DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+      DOWNLOAD_EXTRACT_TIMESTAMP FALSE)
     FetchContent_MakeAvailable(googletest)
   endif()
 
@@ -178,6 +178,7 @@ if(INTROALGO_BUILD_TESTS)
     tests/test_bitonic_tour.cpp
     tests/test_bst.cpp
     tests/test_chain_hash.cpp
+    tests/test_checked_arithmetic.cpp
     tests/test_constrained_permutations.cpp
     tests/test_edit_distance.cpp
     tests/test_flow_graph.cpp
@@ -204,5 +205,5 @@ if(INTROALGO_BUILD_TESTS)
   )
   target_include_directories(introalgo_tests PRIVATE tests)
   target_link_libraries(introalgo_tests PRIVATE introalgo introalgo_warnings GTest::gtest_main)
-  gtest_discover_tests(introalgo_tests DISCOVERY_MODE PRE_TEST PROPERTIES LABELS unit)
+  gtest_discover_tests(introalgo_tests DISCOVERY_MODE PRE_TEST PROPERTIES LABELS unit TIMEOUT 120)
 endif()
