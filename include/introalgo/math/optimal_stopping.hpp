@@ -6,7 +6,7 @@ namespace introalgo {
 /// first x of them and then hire the first one who is better than everybody seen so far.  The
 /// probability of ending up with the best candidate is
 ///
-///     P(x) = x / n * sum_{i=x}^{n-1} 1 / i          (x >= 1),
+///     P(x) = x / n * sum_{i=x}^{n-1} 1 / i          (x >= 1),     P(0) = 1 / n,
 ///
 /// which is maximal for x close to n / e, where it approaches 1 / e = 0.3679.
 class CalFormula {
@@ -14,12 +14,12 @@ public:
     /// Throws std::invalid_argument for n < 1.
     explicit CalFormula(int n);
 
-    /// Success probability when the first x candidates are rejected (0 <= x <= n; P(0) is
-    /// reported as 0 -- hiring the first candidate has probability 1/n, outside the formula).
+    /// Success probability when the first x candidates are rejected (0 <= x <= n).
+    /// Rejecting none hires the first candidate, with success probability 1/n.
     double calculate(int x) const;
 
-    /// The best number of candidates to reject (the first x in 1..n with the largest probability;
-    /// 0 for n = 1, where the formula never exceeds 0).  The probability is in bestProbability().
+    /// The best number of candidates to reject (the first x in 0..n with the largest probability).
+    /// The probability is in bestProbability(); for n = 1, reject none and succeed with certainty.
     int getMax();
     double bestProbability() const { return best; }
 

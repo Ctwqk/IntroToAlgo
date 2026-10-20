@@ -43,17 +43,17 @@ TEST(OptimalStopping, OriginalDemoRejectsSeventyThreeOfTwoHundred) {
 TEST(OptimalStopping, FormulaMatchesExhaustiveEnumeration) {
     for (int n = 1; n <= 8; ++n) {
         CalFormula c(n);
-        for (int x = 1; x <= n; ++x)
+        for (int x = 0; x <= n; ++x)
             EXPECT_NEAR(c.calculate(x), exhaustiveProbability(n, x), 1e-12)
                 << "n=" << n << " x=" << x;
     }
 }
 
 TEST(OptimalStopping, GetMaxPicksTheBestRejectionCountAmongAllChoices) {
-    for (int n = 2; n <= 8; ++n) {
+    for (int n = 1; n <= 8; ++n) {
         CalFormula c(n);
-        int bestX = 1;
-        for (int x = 1; x <= n; ++x)
+        int bestX = 0;
+        for (int x = 0; x <= n; ++x)
             if (exhaustiveProbability(n, x) > exhaustiveProbability(n, bestX) + 1e-12) bestX = x;
         EXPECT_EQ(c.getMax(), bestX) << "n=" << n;
         EXPECT_NEAR(c.bestProbability(), exhaustiveProbability(n, bestX), 1e-12);
@@ -68,8 +68,12 @@ TEST(OptimalStopping, ProbabilityTendsToOneOverE) {
 
 TEST(OptimalStopping, EdgeCases) {
     CalFormula one(1);
-    EXPECT_EQ(one.getMax(), 0);  // the formula only covers x >= 1
-    EXPECT_EQ(one.calculate(0), 0.0);
+    EXPECT_EQ(one.getMax(), 0);  // hire the only candidate
+    EXPECT_EQ(one.calculate(0), 1.0);
+    EXPECT_EQ(one.bestProbability(), 1.0);
+    CalFormula two(2);
+    EXPECT_EQ(two.getMax(), 0);  // both thresholds succeed with probability 1/2; prefer the first
+    EXPECT_EQ(two.bestProbability(), 0.5);
     CalFormula three(3);
     EXPECT_EQ(three.calculate(-1), 0.0);
     EXPECT_EQ(three.calculate(4), 0.0);
