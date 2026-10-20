@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <sstream>
 #include <vector>
 
@@ -33,7 +34,11 @@ Matrix multiply(const Matrix& a, const Matrix& b) {
 double maxAbsDiff(const Matrix& a, const Matrix& b) {
     double d = 0;
     for (std::size_t i = 0; i < a.size(); ++i)
-        for (std::size_t j = 0; j < a.size(); ++j) d = std::max(d, std::fabs(a[i][j] - b[i][j]));
+        for (std::size_t j = 0; j < a.size(); ++j) {
+            const double error = std::fabs(a[i][j] - b[i][j]);
+            if (!std::isfinite(error)) return std::numeric_limits<double>::infinity();
+            d = std::max(d, error);
+        }
     return d;
 }
 
@@ -57,6 +62,15 @@ double cofactorDeterminant(const Matrix& m) {
 }
 
 }  // namespace
+
+TEST(Lup, ResidualOracleRejectsNonFiniteValues) {
+    // std::max(0, NaN) is 0: a broken factor extraction could otherwise look exact.
+    const double nan = std::numeric_limits<double>::quiet_NaN();
+    const double inf = std::numeric_limits<double>::infinity();
+    EXPECT_GT(maxAbsDiff({{nan}}, {{1}}), 1e-9);
+    EXPECT_GT(maxAbsDiff({{1}}, {{nan}}), 1e-9);
+    EXPECT_GT(maxAbsDiff({{inf}}, {{inf}}), 1e-9);
+}
 
 TEST(Lup, SolveEquationFromOriginalDemo) {
     // The answer given in the original comment: -3/19, -1/19, 59/19.

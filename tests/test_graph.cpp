@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <limits>
 #include <numeric>
 #include <set>
 #include <sstream>
@@ -325,44 +326,71 @@ TEST(Graph, RandomizedTopologicalSortsAreValidExactlyWhenAcyclic) {
 
 namespace {
 
-// Exhaustive oracle: the cheapest acyclic edge subset that has V - (#components) edges.
+using Reachability = std::vector<std::vector<bool>>;
+
+int countComponents(const Reachability& reach) {
+    int count = 0;
+    for (std::size_t v = 0; v < reach.size(); ++v) {
+        bool first = true;
+        for (std::size_t u = 0; u < v; ++u)
+            if (reach[u][v]) first = false;
+        if (first) ++count;
+    }
+    return count;
+}
+
+// Compute connectivity directly, without the Graph/UFSet operations used by Kruskal.
+Reachability forestReachability(int n, const std::vector<introalgo::WeightedEdge>& edges) {
+    Reachability reach(static_cast<std::size_t>(n),
+                       std::vector<bool>(static_cast<std::size_t>(n), false));
+    for (int v = 0; v < n; ++v) reach[v][v] = true;
+    for (const auto& e : edges) reach[e.u][e.v] = reach[e.v][e.u] = true;
+    for (int k = 0; k < n; ++k)
+        for (int u = 0; u < n; ++u)
+            for (int v = 0; v < n; ++v)
+                if (reach[u][k] && reach[k][v]) reach[u][v] = true;
+    return reach;
+}
+
+// With V - (#components) edges, preserving all components is equivalent to being a
+// spanning forest. Exhaust all such subsets and compare connectivity via transitive closure.
 long long bruteForceMst(const Graph& g) {
     std::vector<introalgo::WeightedEdge> edges;
     for (int i = 0; i < g.vertices(); ++i)
         for (int j = i + 1; j < g.vertices(); ++j)
             if (g.matrix()[i][j]) edges.push_back({i, j, g.matrix()[i][j]});
-    Graph copy = g;
-    const int need = g.vertices() - copy.componentCount();
-    long long best = -1;
+    const auto reach = closure(g);
+    const int need = g.vertices() - countComponents(reach);
+    long long best = std::numeric_limits<long long>::max();
     for (unsigned mask = 0; mask < (1u << edges.size()); ++mask) {
         if (__builtin_popcount(mask) != need) continue;
-        UFSet uf(g.vertices());
+        std::vector<introalgo::WeightedEdge> chosen;
         long long total = 0;
-        bool acyclic = true;
-        for (std::size_t e = 0; e < edges.size() && acyclic; ++e)
+        for (std::size_t e = 0; e < edges.size(); ++e)
             if (mask >> e & 1u) {
-                acyclic = uf.Union(edges[e].u, edges[e].v);
+                chosen.push_back(edges[e]);
                 total += edges[e].weight;
             }
-        if (acyclic && (best < 0 || total < best)) best = total;
+        if (forestReachability(g.vertices(), chosen) == reach) best = std::min(best, total);
     }
-    return best < 0 ? 0 : best;
+    return best;
 }
 
 void expectSpanningForest(const Graph& g, const introalgo::SpanningForest& f) {
-    Graph copy = g;
-    EXPECT_EQ(int(f.edges.size()), g.vertices() - copy.componentCount());
-    UFSet uf(g.vertices());
+    const auto reach = closure(g);
+    EXPECT_EQ(int(f.edges.size()), g.vertices() - countComponents(reach));
     long long total = 0;
     for (const auto& e : f.edges) {
+        ASSERT_GE(e.u, 0);
+        ASSERT_LT(e.u, g.vertices());
+        ASSERT_GE(e.v, 0);
+        ASSERT_LT(e.v, g.vertices());
+        EXPECT_NE(g.matrix()[e.u][e.v], 0) << "forest edge is absent from the input graph";
         EXPECT_EQ(g.matrix()[e.u][e.v], e.weight);
-        EXPECT_TRUE(uf.Union(e.u, e.v)) << "forest edge closes a cycle";
         total += e.weight;
     }
     EXPECT_EQ(total, f.weight);
-    for (int u = 0; u < g.vertices(); ++u)
-        for (int v = 0; v < g.vertices(); ++v)
-            EXPECT_EQ(uf.connected(u, v), copy.sameComponent(u, v));
+    EXPECT_EQ(forestReachability(g.vertices(), f.edges), reach);
 }
 
 }  // namespace
@@ -391,6 +419,17 @@ TEST(Graph, MinimumSpanningForestOfADisconnectedGraphAndNegativeWeights) {
     EXPECT_EQ(Graph(0).MST_K().weight, 0);
 }
 
+TEST(Graph, ExhaustiveMstOracleHandlesNegativeTotals) {
+    Graph g(4);  // A triangle and one isolated vertex; optimum uses weights -5 and -4.
+    g.addUndirectedEdge(0, 1, -5);
+    g.addUndirectedEdge(1, 2, -4);
+    g.addUndirectedEdge(0, 2, -1);
+    EXPECT_EQ(bruteForceMst(g), -9);
+    EXPECT_EQ(g.MST_K().weight, -9);
+    EXPECT_EQ(g.MST_prim().weight, -9);
+    EXPECT_EQ(bruteForceMst(Graph(0)), 0);
+}
+
 TEST(Graph, MinimumSpanningTreeRejectsDirectedGraphs) {
     Graph g(2);
     g.addEdge(0, 1);
@@ -403,6 +442,10 @@ TEST(Graph, RandomizedMstMatchesExhaustiveSearch) {
     for (int iter = 0; iter < 300; ++iter) {
         const int n = testutil::randInt(rng, 1, 6);
         Graph g = randomGraph(rng, n, testutil::randInt(rng, 0, 9), true, 9);
+        for (int u = 0; u < n; ++u)
+            for (int v = u + 1; v < n; ++v)
+                if (g.matrix()[u][v] && testutil::randInt(rng, 0, 1))
+                    g.addUndirectedEdge(u, v, -g.matrix()[u][v]);
         const long long expected = bruteForceMst(g);
         const auto k = g.MST_K();
         const auto p = g.MST_prim();
