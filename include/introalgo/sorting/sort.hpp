@@ -60,7 +60,7 @@ public:
     void counting_sort();
 
     /// LSD radix sort of records with `digit` digits each (digit 0 is the most significant).
-    /// Throws std::invalid_argument if a record has fewer digits.
+    /// Throws std::invalid_argument if digit is negative or a record has fewer digits.
     void radix_sort(std::vector<DigitKey>& t, int digit) const;
     /// One stable counting-sort pass on the digit-th digit.
     void aux_counting_radix(std::vector<DigitKey>& ds, int digit) const;

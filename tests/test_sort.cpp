@@ -175,6 +175,17 @@ TEST(Sort, RadixSortRejectsShortRecords) {
     EXPECT_THROW(Sort().radix_sort(recs, 2), std::invalid_argument);
 }
 
+TEST(Sort, RadixSortRejectsNegativeDigitCounts) {
+    std::vector<DigitKey> recs{DigitKey(std::vector<int>{2}), DigitKey(std::vector<int>{1})};
+    for (int digits : {-1, INT_MIN})
+        EXPECT_THROW(Sort().radix_sort(recs, digits), std::invalid_argument);
+    std::vector<DigitKey> empty;
+    EXPECT_THROW(Sort().radix_sort(empty, -1), std::invalid_argument);
+    Sort().radix_sort(recs, 0);
+    EXPECT_EQ(recs[0].key, (std::vector<int>{2}));
+    EXPECT_EQ(recs[1].key, (std::vector<int>{1}));
+}
+
 TEST(Sort, CheckoutAndDigitKeyHelpers) {
     Sort s({3, 1, 2});
     s.insert_sort();

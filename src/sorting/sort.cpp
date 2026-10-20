@@ -155,6 +155,7 @@ void Sort::aux_counting_radix(std::vector<DigitKey>& ds,
 }
 
 void Sort::radix_sort(std::vector<DigitKey>& t, int digit) const {
+    if (digit < 0) throw std::invalid_argument("Sort::radix_sort: negative digit count");
     if (!t.size()) return;
     for (const auto& d : t)
         if (d.digits() < digit)
