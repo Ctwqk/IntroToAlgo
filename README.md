@@ -1,6 +1,6 @@
 # IntroToAlgo
 
-[![CI](https://github.com/Ctwqk/IntroToAlgo/actions/workflows/ci.yml/badge.svg?branch=portfolio-upgrade)](https://github.com/Ctwqk/IntroToAlgo/actions/workflows/ci.yml)
+[![CI](https://github.com/Ctwqk/IntroToAlgo/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Ctwqk/IntroToAlgo/actions/workflows/ci.yml)
 
 **A small C++17 library of the classic algorithms from an algorithms course (dynamic programming, graphs and
 max-flow, simplex, LUP, heaps, hashing, search trees, string matching, ...), each one a header/source pair with
@@ -99,7 +99,6 @@ first configure needs network access (or pass `-DINTROALGO_USE_SYSTEM_GTEST=ON`)
 ```bash
 git clone https://github.com/Ctwqk/IntroToAlgo.git
 cd IntroToAlgo
-git checkout portfolio-upgrade           # until the branch is merged
 
 cmake -S . -B build                      # Release by default
 cmake --build build -j4
@@ -230,7 +229,7 @@ cmake/                            package config template
 
 ## Known limitations and roadmap
 
-- No `LICENSE` file yet (the owner has to choose one).
+- Released under the [MIT License](LICENSE).
 - `graph` stores a dense weight matrix next to the adjacency lists (O(V^2) memory); edges with weight 0 cannot be
   represented, and `multmat` needs non-negative weights.
 - The trie uses recursion for traversal and node destruction; extremely long words can exhaust the stack.
