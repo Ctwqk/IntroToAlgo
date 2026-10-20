@@ -13,8 +13,8 @@ and are verified. Writing the tests exposed a good number of real bugs; they are
 
 ```text
 $ ctest --test-dir build
-100% tests passed, 0 tests failed out of 229
-  unit       202 tests (known answers + randomized property tests against oracles)
+100% tests passed, 0 tests failed out of 232
+  unit       205 tests (known answers + randomized property tests against oracles)
   example     26 tests (every original demo runs to completion)
   benchmark    1 test  (smoke run of the scaling harness)
 ```
@@ -72,7 +72,7 @@ implementation is checked against.
 | DP | [`bitonic_tour`](include/introalgo/dynamic_programming/bitonic_tour.hpp) | Shortest bitonic Euclidean tour (was `LongSinglePath`); tour reconstruction added | O(n^2) / O(n^2) | [tests](tests/test_bitonic_tour.cpp): all bitonic permutations |
 | DP | [`max_quad_exp`](include/introalgo/dynamic_programming/max_quad_exp.hpp) | Largest value of `a op b op ...` over all parenthesizations (max/min table); prints the optimal parenthesization | O(n^3) / O(n^2) | [tests](tests/test_max_quad_exp.cpp): all parenthesizations; the printed expression is re-evaluated by an independent parser |
 | Strings | [`kmp`](include/introalgo/strings/kmp.hpp) | Knuth-Morris-Pratt search, all overlapping matches | O(n + m) / O(n + m + matches) including stored strings | [tests](tests/test_kmp.cpp): naive search, prefix function by definition |
-| Strings | [`rolling_hash`](include/introalgo/strings/rolling_hash.hpp) | Rabin-Karp matching of DNA (base-4 rolling hash, matches verified) | O(n + m) expected, O(nm) worst / O(n + m + matches) | [tests](tests/test_rolling_hash.cpp): naive search, forced hash collisions (tiny moduli) |
+| Strings | [`rolling_hash`](include/introalgo/strings/rolling_hash.hpp) | Rabin-Karp matching of DNA (base-4 rolling hash, matches verified) | O(n + m) hashing plus O(m) per hash hit (including true matches), O(nm) worst / O(n + m + matches) | [tests](tests/test_rolling_hash.cpp): naive search, forced hash collisions (tiny moduli) |
 | Strings | [`trie`](include/introalgo/strings/trie.hpp) | Trie with per-edge counters: insert, delete (prunes), search, change | O(len) per word operation / O(S) storage | [tests](tests/test_trie.cpp): `std::set` + counter-consistency checker |
 | Graphs | [`graph`](include/introalgo/graph/graph.hpp) | Union-find, matrix/adjacency graph, BFS/DFS, cycle detection, two topological sorts, Prim and Kruskal MST, all-pairs shortest paths by min-plus squaring | UF amortized O(alpha(V)); BFS/DFS O(V + E); MST O(V^2 + E log E); `multmat` O(V^3 log V) / O(V^2 + E) storage | [tests](tests/test_graph.cpp): Warshall closure, cycle oracles, exhaustive spanning forests, Floyd-Warshall |
 | Graphs | [`flow_graph`](include/introalgo/graph/flow_graph.hpp) | Maximum flow (Edmonds-Karp) with min cut, labelled-vertex wrapper; *the original was a non-compiling sketch* | O(V E^2) / O(V + E) | [tests](tests/test_flow_graph.cpp): brute-force minimum cut, flow conservation, bipartite matching |

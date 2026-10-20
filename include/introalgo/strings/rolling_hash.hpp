@@ -12,7 +12,8 @@ namespace introalgo {
 /// next one (the original comment: "use binary to simulate quaternary").  Hash hits are
 /// verified character by character, so the result is exact for every modulus.
 ///
-/// Expected O(n + m) time, worst case O(nm) when many windows collide.
+/// O(n + m) for rolling hashes plus O(m) per hash hit (true matches as well as collisions).
+/// Worst-case O(nm), including repetitive text with many overlapping matches.
 class DNAMatch {
 public:
     /// The prime used by the original program (11! + 1).

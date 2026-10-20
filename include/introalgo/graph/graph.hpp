@@ -97,7 +97,8 @@ public:
     std::optional<std::vector<int>> TopoSortKhan() const;
 
     /// Minimum spanning forest of an undirected graph (a tree per component).  Throws
-    /// std::logic_error for a directed graph.  Prim: O(E log V); Kruskal: O(E log E).
+    /// std::logic_error for a directed graph.  Including the dense symmetry check:
+    /// Prim: O(V^2 + E log V); Kruskal: O(V^2 + E log E).
     SpanningForest MST_prim() const;
     SpanningForest MST_K() const;
 

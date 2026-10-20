@@ -84,7 +84,8 @@ Directory names with typos (`Greedt`, `Dynamic_Programing`, `LinearPrograming`) 
 ### Checked and found correct
 
 `obst` (the DP and the printing), `solar_panels` (the greedy rule is optimal; checked against exhaustive
-assignment and a max-flow oracle), `optimal_stopping` (matches exact enumeration of all arrival orders) and the
+assignment and a max-flow oracle), `optimal_stopping` (matches exact enumeration of all arrival orders for
+positive rejection thresholds) and the
 core recurrence of `constrained_permutations` (checked against all permutations for n <= 7 and every threshold
 pair) needed no algorithmic changes.
 
@@ -120,3 +121,17 @@ extraction-time dependency timestamps, fill in the README's space bounds, and co
 threshold search to O(n^2) (it sums probabilities for every threshold). Also correct the vEB claim: lazy child
 nodes still reserve pointer arrays, so storage is O(u) in the worst case and allocation is part of update cost.
 The original executable permission bits on C++ source files were removed; the demo runner remains executable.
+
+## Independent review: input boundaries and test oracles
+
+Review of `5368db0` reproduced four additional problems before applying the corrections:
+
+| Area | Problem | Correction |
+|---|---|---|
+| `sort` | A negative radix digit count was not validated. `INT_MIN` reached `digit - 1`, producing a UBSan signed-overflow report. | Reject negative counts with `std::invalid_argument`, including for empty input; retain zero as a no-op. |
+| `optimal_stopping` | `calculate(0)` reported zero instead of `1/n`; with one candidate, `getMax()` reported a zero success probability. The exhaustive tests skipped this strategy. | Include immediate hiring in the probability and threshold search. Exhaustive checks now cover every threshold from 0 through n, including n = 1. For n = 2, the equal-probability tie now picks threshold 0. |
+| MST tests | The exhaustive oracle and forest validator reused the implementation's union-find. The `best < 0` sentinel also discarded negative optima (a triangle with weights -5, -4, -1 returned 0 instead of -9). Randomized weights were positive only. | Check component preservation using transitive closure and edge counts, use `LLONG_MAX` as the sentinel, and include negative weights in the randomized cases. Also reject fabricated weight-zero nonedges in the forest validator. |
+| LUP tests | `std::max(0, NaN)` returned 0, so a non-finite factorization residual could pass as exact. | Return an infinite error for non-finite differences; add explicit NaN and infinity regressions. |
+
+The original recurrences and data structures remain intact. Documentation now includes the dense symmetry check
+in the MST API bounds and the cost of verifying true Rabin-Karp matches as well as hash collisions.
